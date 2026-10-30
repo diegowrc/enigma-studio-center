@@ -222,6 +222,24 @@ html{-webkit-text-size-adjust:100%}
   .modal{align-items:end;padding:0}
   .modal-card{max-width:none;border-radius:18px 18px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom))}
 }
+/* ===== estado del lote ===== */
+.st-pen{--c:#7C8491}.st-pro{--c:#D9A400}.st-fin{--c:var(--A)}.st-sin{--c:var(--E)}
+@media (prefers-color-scheme:dark){.st-pen{--c:#8B93A0}.st-pro{--c:#F0C23A}}
+select.stsel{width:auto;min-width:150px;padding:5px 28px 5px 10px;border:1px solid var(--line);border-left:8px solid var(--c);background:color-mix(in srgb,var(--c) 14%,var(--panel));font-weight:600;border-radius:8px;cursor:pointer}
+.fchips{display:flex;gap:8px;flex-wrap:wrap}
+.fchip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:5px 12px;font-weight:600;font-size:13.5px;cursor:pointer;white-space:nowrap}
+.fchip i{width:10px;height:10px;border-radius:50%;background:var(--c,var(--mute));flex:none}
+.fchip small{color:var(--mute);font-weight:600;font-size:12.5px}
+.fchip[aria-pressed=true]{border-color:var(--ink);background:var(--soft);box-shadow:inset 0 0 0 1px var(--ink)}
+.panel-h.stack{align-items:center}
+@media(max-width:700px){
+  .panel-h.stack{display:block}
+  .panel-h.stack h2{margin-bottom:10px}
+  .fchips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -14px;padding:2px 14px 6px}
+  .fchips::-webkit-scrollbar{display:none}
+  .fchip{flex:none;min-height:40px;font-size:14.5px;padding:6px 14px}
+  select.stsel{min-width:160px;max-width:100%}
+}
 /* ===== aviso: abierto dentro de WhatsApp / navegador integrado ===== */
 #safariBar{display:none;position:sticky;top:0;z-index:80;background:#FFF4D6;color:#3a2a00;border-bottom:2px solid #E39A00;padding:max(12px,env(safe-area-inset-top)) 16px 12px}
 #safariBar.show{display:block}
@@ -312,6 +330,9 @@ const DESTINOS=["VENTA","HOGAR","TALLER","PRUEBA","USO PERSONAL"];
 const ESTADOS=["Producto terminado","Producto dañado","Parcialmente dañado","Prueba"];
 const LET={A:{t:"Terminado"},P:{t:"Prueba"},E:{t:"Taller / hogar"},D:{t:"Dañado"},"?":{t:"Sin estado"}};
 const lc=l=>l==="?"?"Q":l;
+const ESTLOTE=["Pendiente","En proceso","Finalizado","Sin terminar"];
+const STK={"Pendiente":"pen","En proceso":"pro","Finalizado":"fin","Sin terminar":"sin"};
+const normSt=v=>{const t=String(v||"").trim().toLowerCase();return ESTLOTE.find(x=>x.toLowerCase()===t)||"Finalizado"};
 
 /* ============ estado ============ */
 const S={buf:null,fileName:"",handle:null,rows:[],items:[],itemMap:{},tariff:0.091,tariffDirty:false,
@@ -362,7 +383,7 @@ async function loadBuffer(buf,name){
   for(const [r,o] of reg){if(r<2||!o.A)continue;S.lastRow=Math.max(S.lastRow,r);
     S.rows.push({row:r,src:"file",dirty:false,lote:String(o.A).trim(),fecha:typeof o.B==="number"?serialToISO(o.B):"",articulo:o.C||"",desc:o.D||"",
       cant:num(o.E)||0,item:String(o.F||"").trim(),pesoU:num(o.J),purga:num(o.K)||0,min:num(o.M)||0,estado:String(o.P||"").trim(),
-      pv:num(o.T)||0,destino:String(o.X||"").trim().toUpperCase(),notas:o.Y||"",insumo:String(o.Z||"").trim(),insumoCosto:num(o.AA)||0,equipo:String(o.AB||"").trim()})}
+      pv:num(o.T)||0,destino:String(o.X||"").trim().toUpperCase(),notas:o.Y||"",insumo:String(o.Z||"").trim(),insumoCosto:num(o.AA)||0,equipo:String(o.AB||"").trim(),estLote:normSt(o.AC)})}
   S.buf=buf;S.fileName=name||S.fileName;S.paths=paths;
   S.rows.forEach(derive);
   S.fileLotes=new Set(S.rows.map(r=>r.lote));S.deleted=0;
@@ -386,7 +407,7 @@ function lotes(){
     l.fecha=rs[0].fecha;l.articulo=rs[0].articulo||rs[0].desc;l.min=sum(rs,"min");l.g=sum(rs,"pesoTot");
     l.ins=sum(rs,"insumoCosto");l.costMat=sum(rs,"costMat");l.elec=sum(rs,"elec");l.kwh=sum(rs,"kwh");l.venta=sum(rs,"venta");l.neta=sum(rs,"neta");l.unid=sum(rs,"cant");
     l.destinos=[...new Set(rs.map(r=>r.destino).filter(Boolean))];l.estados=[...new Set(rs.map(r=>r.estado).filter(Boolean))];
-    l.letter=letterOf(rs);l.pending=rs.some(r=>r.dirty);
+    l.letter=letterOf(rs);l.status=rs[0].estLote||"Finalizado";l.pending=rs.some(r=>r.dirty);
   }
   return [...m.values()];
 }
@@ -473,14 +494,14 @@ async function buildXlsx(){
     put("S",{f:F.S,cached:r.costMat});put("T",{num:r.pv||0});put("U",{f:F.U,cached:r.venta});
     put("V",{f:F.V,cached:(r.pv||0)-(r.pesoU||0)*r.precioKg/1000});put("W",{f:F.W,cached:r.neta});
     put("X",{str:r.destino});put("Y",{str:r.notas||""});
-    putCell(doc,el,"Z",{s:own.Z??styles.Y,str:r.insumo});if(r.insumoCosto>0)putCell(doc,el,"AA",{s:own.AA??styles.T,num:r.insumoCosto});putCell(doc,el,"AB",{s:own.AB??styles.Y,str:r.eq});
+    putCell(doc,el,"Z",{s:own.Z??styles.Y,str:r.insumo});if(r.insumoCosto>0)putCell(doc,el,"AA",{s:own.AA??styles.T,num:r.insumoCosto});putCell(doc,el,"AB",{s:own.AB??styles.Y,str:r.eq});putCell(doc,el,"AC",{s:own.AC??styles.Y,str:r.estLote||"Finalizado"});
   }
   // filas que quedaron sobrantes por eliminar lotes: se vacían (se conserva el formato)
   for(const [rn,el] of idx.m){if(rn>n&&rn<=S.lastRow){for(const c of [...el.children]){while(c.firstChild)c.removeChild(c.firstChild);c.removeAttribute("t")}}}
   // encabezados de las columnas nuevas y ancho
   const h1=idx.m.get(1);
   if(h1){h1.removeAttribute("spans");const hs=[...h1.children].find(c=>colOf(c.getAttribute("r"))==="Y")?.getAttribute("s");
-    putCell(doc,h1,"Z",{s:hs,str:"Descripción de insumo"});putCell(doc,h1,"AA",{s:hs,str:"Costo de insumo ($)"});putCell(doc,h1,"AB",{s:hs,str:"Equipo"})}
+    putCell(doc,h1,"Z",{s:hs,str:"Descripción de insumo"});putCell(doc,h1,"AA",{s:hs,str:"Costo de insumo ($)"});putCell(doc,h1,"AB",{s:hs,str:"Equipo"});putCell(doc,h1,"AC",{s:hs,str:"Estado del lote"})}
   // lista desplegable de equipos en la columna AB (toma los nombres de la hoja Equipos)
   if(![...doc.getElementsByTagName("dataValidation")].some(v=>(v.getAttribute("sqref")||"").startsWith("AB2"))){
     const dv=mk(doc,"dataValidation");dv.setAttribute("type","list");dv.setAttribute("allowBlank","1");dv.setAttribute("sqref","AB2:AB467");
@@ -489,8 +510,12 @@ async function buildXlsx(){
     if(!dvs){dvs=mk(doc,"dataValidations");const later=["hyperlinks","printOptions","pageMargins","pageSetup","headerFooter","rowBreaks","colBreaks","customProperties","cellWatches","ignoredErrors","smartTags","drawing","legacyDrawing","legacyDrawingHF","picture","oleObjects","controls","webPublishItems","tableParts","extLst"];
       const before=[...doc.documentElement.children].find(c=>later.includes(c.localName));doc.documentElement.insertBefore(dvs,before||null)}
     dvs.appendChild(dv);dvs.setAttribute("count",String(dvs.children.length))}
+  if(![...doc.getElementsByTagName("dataValidation")].some(v=>(v.getAttribute("sqref")||"").startsWith("AC2"))){
+    const dv2=mk(doc,"dataValidation");dv2.setAttribute("type","list");dv2.setAttribute("allowBlank","1");dv2.setAttribute("sqref","AC2:AC467");
+    const f2=mk(doc,"formula1");f2.textContent='"'+ESTLOTE.join(",")+'"';dv2.appendChild(f2);
+    const dvs2=doc.getElementsByTagName("dataValidations")[0];dvs2.appendChild(dv2);dvs2.setAttribute("count",String(dvs2.children.length))}
   const cl=doc.getElementsByTagName("cols")[0];
-  if(cl)for(const [mn,w] of [[26,30],[27,18],[28,18]]){if([...cl.children].every(c=>+c.getAttribute("max")<mn)){const c=mk(doc,"col");c.setAttribute("min",String(mn));c.setAttribute("max",String(mn));c.setAttribute("width",String(w));c.setAttribute("customWidth","1");cl.appendChild(c)}}
+  if(cl)for(const [mn,w] of [[26,30],[27,18],[28,18],[29,18]]){if([...cl.children].every(c=>+c.getAttribute("max")<mn)){const c=mk(doc,"col");c.setAttribute("min",String(mn));c.setAttribute("max",String(mn));c.setAttribute("width",String(w));c.setAttribute("customWidth","1");cl.appendChild(c)}}
   const last=Math.max(n,2);
   zip.file(S.paths.Registro,ser(doc));
   /* --- tabla, tabla dinámica, cálculo --- */
@@ -680,6 +705,13 @@ function renderFilebar(){
   const fab=$("#saveFab");fab.classList.toggle("show",!!p);fab.textContent=S.handle?"Guardar en el Excel":CAN_SHARE?"Guardar en Archivos":"Descargar Excel";fab.onclick=()=>save(S.handle?"same":CAN_SHARE?"share":"download");
 }
 
+/* ---- Estado del lote ---- */
+function stSelect(id,val){return `<select class="in stsel st-${STK[val]||"pen"}" data-stlote="${esc(id)}" aria-label="Estado del lote ${esc(id)}">${ESTLOTE.map(x=>`<option ${x===val?"selected":""}>${x}</option>`).join("")}</select>`}
+function setLoteStatus(id,v){
+  const rs=S.rows.filter(r=>r.lote===id);if(!rs.length||rs.every(r=>r.estLote===v))return;
+  rs.forEach(r=>{r.estLote=v;r.dirty=true});
+  toast(`${id}: ${v}. Guarda el Excel para escribirlo.`);renderAll();
+}
 /* ---- Dashboard ---- */
 function usage(){const u={};for(const r of S.rows){(u[r.item]??={g:0,cost:0});u[r.item].g+=r.pesoTot;u[r.item].cost+=r.costMat}return u}
 function renderDash(){
@@ -716,7 +748,9 @@ function renderDash(){
   // destinos
   const D={};for(const r of R){const k=r.destino||"SIN DESTINO";(D[k]??={l:new Set(),u:0,g:0,c:0,v:0});D[k].l.add(r.lote);D[k].u+=r.cant;D[k].g+=r.pesoTot;D[k].c+=r.costo;D[k].v+=r.venta}
   const dRows=Object.entries(D).sort((a,b)=>b[1].g-a[1].g).map(([k,d])=>`<tr><td><span class="tag">${esc(k)}</span></td><td class="num">${d.l.size}</td><td class="num">${nf(d.g,0)} g</td><td class="num">${money(d.c)}</td><td class="num">${money(d.v)}</td></tr>`).join("");
-  const lrows=[...L].reverse().map(l=>`<tr class="click" data-lote="${esc(l.id)}"><td><b>${esc(l.id)}</b>${l.pending?' <span class="tag">sin guardar</span>':""}</td><td>${shortDate(l.fecha)}</td><td>${esc(l.articulo)}</td><td><span class="badge L-${lc(l.letter)}" title="${LET[l.letter].t}">${l.letter}</span></td><td>${l.destinos.map(d=>`<span class="tag">${esc(d)}</span>`).join(" ")}</td><td class="num">${nf(l.g,1)} g</td><td class="num">${hm(l.min)}</td><td class="num">${money(l.costMat+l.elec+l.ins)}</td><td class="num">${money(l.venta)}</td><td class="num ${l.neta>=0?"pos":"neg"}">${money(l.neta)}</td>${S.unlocked?`<td class="num" style="white-space:nowrap"><button class="btn small" data-edit-lote="${esc(l.id)}">Editar</button> <button class="btn small danger" data-del-lote="${esc(l.id)}">Eliminar</button></td>`:""}</tr>`).join("");
+  const lrows=[...L].reverse().filter(l=>!S.stFilter||l.status===S.stFilter).map(l=>`<tr class="click" data-lote="${esc(l.id)}"><td><b>${esc(l.id)}</b>${l.pending?' <span class="tag">sin guardar</span>':""}</td><td>${shortDate(l.fecha)}</td><td>${esc(l.articulo)}</td><td>${stSelect(l.id,l.status)}</td><td><span class="badge L-${lc(l.letter)}" title="${LET[l.letter].t}">${l.letter}</span></td><td>${l.destinos.map(d=>`<span class="tag">${esc(d)}</span>`).join(" ")}</td><td class="num">${nf(l.g,1)} g</td><td class="num">${hm(l.min)}</td><td class="num">${money(l.costMat+l.elec+l.ins)}</td><td class="num">${money(l.venta)}</td><td class="num ${l.neta>=0?"pos":"neg"}">${money(l.neta)}</td>${S.unlocked?`<td class="num" style="white-space:nowrap"><button class="btn small" data-edit-lote="${esc(l.id)}">Editar</button> <button class="btn small danger" data-del-lote="${esc(l.id)}">Eliminar</button></td>`:""}</tr>`).join("");
+  const chip=(k,t,n)=>`<button type="button" class="fchip ${k?"st-"+STK[k]:""}" data-sf="${esc(k)}" aria-pressed="${(S.stFilter||"")===k}"><i></i>${t} <small>${n}</small></button>`;
+  const chips=`<div class="fchips" role="group" aria-label="Filtrar lotes por estado">${chip("","Todos",L.length)}${ESTLOTE.map(k=>chip(k,k,L.filter(l=>l.status===k).length)).join("")}</div>`;
   $("#view-dash").innerHTML=stats+
   `<div class="grid g2"><div class="panel"><div class="panel-h"><h2>Filamento</h2><span class="muted">Invertido en bobinas: <b>${money(invTot)}</b></span></div>${inv}</div>
    <div class="panel"><div class="panel-h"><h2>Horas de impresión por día</h2><span class="muted">${S.equipos.map(e=>esc(e.name)).join(" · ")}</span></div>${dayChart}</div></div>
@@ -727,8 +761,9 @@ function renderDash(){
      <div><span class="badge L-A">A</span> Producto terminado (venta u otro uso)</div><div><span class="badge L-E">E</span> Terminado para taller u hogar</div>
      <div><span class="badge L-P">P</span> Prueba</div><div><span class="badge L-D">D</span> Dañado o parcialmente dañado</div><div><span class="badge L-Q">?</span> Falta estado o destino</div>
      <p class="hint" style="margin:6px 0 0">Haz clic en un lote de la tabla para ver su etiqueta.</p></div></div></div>
-   <div class="panel"><div class="panel-h"><h2>Lotes</h2></div><div class="scroll"><table class="tbl"><thead><tr><th>Lote</th><th>Fecha</th><th>Artículo</th><th></th><th>Destino</th><th class="num">Peso</th><th class="num">Tiempo</th><th class="num">Costo</th><th class="num">Venta</th><th class="num">Neta</th>${S.unlocked?"<th></th>":""}</tr></thead><tbody>${lrows}</tbody></table></div></div>`;
-  $("#view-dash").onclick=e=>{const ed=e.target.closest("[data-edit-lote]");if(ed)return startEdit(ed.dataset.editLote);const dl=e.target.closest("[data-del-lote]");if(dl)return deleteLote(dl.dataset.delLote);const go=e.target.closest("[data-go]");if(go)return setTab(go.dataset.go);const tr=e.target.closest("tr[data-lote]");if(tr){S.labelLote=tr.dataset.lote;setTab("label")}};
+   <div class="panel"><div class="panel-h stack"><h2>Lotes</h2>${chips}</div><div class="scroll"><table class="tbl"><thead><tr><th>Lote</th><th>Fecha</th><th>Artículo</th><th>Estado</th><th></th><th>Destino</th><th class="num">Peso</th><th class="num">Tiempo</th><th class="num">Costo</th><th class="num">Venta</th><th class="num">Neta</th>${S.unlocked?"<th></th>":""}</tr></thead><tbody>${lrows||'<tr><td colspan="12" class="muted">No hay lotes con este estado.</td></tr>'}</tbody></table></div></div>`;
+  $("#view-dash").onchange=e=>{const s=e.target.closest("[data-stlote]");if(s)setLoteStatus(s.dataset.stlote,s.value)};
+  $("#view-dash").onclick=e=>{if(e.target.closest("[data-stlote]"))return;const sf=e.target.closest("[data-sf]");if(sf){S.stFilter=sf.dataset.sf;return renderAll()}const ed=e.target.closest("[data-edit-lote]");if(ed)return startEdit(ed.dataset.editLote);const dl=e.target.closest("[data-del-lote]");if(dl)return deleteLote(dl.dataset.delLote);const go=e.target.closest("[data-go]");if(go)return setTab(go.dataset.go);const tr=e.target.closest("tr[data-lote]");if(tr){S.labelLote=tr.dataset.lote;setTab("label")}};
 }
 
 /* ---- Registrar ---- */
@@ -737,7 +772,7 @@ function nextLoteId(){
   return "A"+String(max+1).padStart(w,"0");
 }
 const blankArt=()=>({desc:"",cant:1,item:S.items.find(i=>i.peso)?.code||"",pesoU:"",purga:0,h:0,m:"",pv:0,notas:"",insumo:"",insC:""});
-function draft(){return S.draft??={sel:"new",articulo:"",fecha:todayISO(),estado:"Producto terminado",destino:"HOGAR",editId:null,equipo:S.equipos[0]?.name||"",arts:[blankArt()]}}
+function draft(){return S.draft??={sel:"new",articulo:"",fecha:todayISO(),estado:"Producto terminado",destino:"HOGAR",stLote:"Pendiente",editId:null,equipo:S.equipos[0]?.name||"",arts:[blankArt()]}}
 function artRow(a){
   const it=S.itemMap[a.item];const pesoTot=(num(a.pesoU)||0)*(num(a.cant)||0)+(num(a.purga)||0);
   const ins=num(a.insC)||0;const min=(num(a.h)||0)*60+(num(a.m)||0);const costMat=pesoTot*(it?.precio||0)/1000,elec=(it?.kw||0)*min/60*S.tariff,venta=(num(a.pv)||0)*(num(a.cant)||0);
@@ -771,7 +806,8 @@ function renderReg(){
       <div><label class="f">Estado final</label><select class="in" id="d-estado">${optList(ESTADOS,d.estado)}</select></div>
       <div><label class="f">Destino</label><select class="in" id="d-destino">${optList(DESTINOS,d.destino)}</select></div></div>
     ${d.sel!=="new"?`<p class="hint">El artículo nuevo hereda nombre, fecha, estado y destino de ${esc(d.sel)}.</p>`:""}`;
-  const eqRow=`<div class="row r4 ${(ed||d.sel==="new")?"":"hidden"}"><div><label class="f">Equipo</label><select class="in" id="d-equipo">${optList(S.equipos.map(e=>e.name),d.equipo)}</select></div></div>`;
+  const eqRow=`<div class="row r4 ${(ed||d.sel==="new")?"":"hidden"}"><div><label class="f">Equipo</label><select class="in" id="d-equipo">${optList(S.equipos.map(e=>e.name),d.equipo)}</select></div>
+    <div><label class="f">Estado del lote</label><select class="in stsel st-${STK[d.stLote]||"pen"}" id="d-stlote">${ESTLOTE.map(x=>`<option ${x===d.stLote?"selected":""}>${x}</option>`).join("")}</select></div></div>`;
   const btns=ed?`<button class="btn primary" id="saveEdit">Guardar cambios del lote</button><button class="btn" id="addArt">+ Añadir artículo</button><button class="btn ghost" id="cancelEdit">Cancelar</button><button class="btn danger" id="delEdit" style="margin-left:auto">Eliminar lote</button>`
     :`<button class="btn" id="addArt">+ Añadir artículo</button><button class="btn primary" id="addLote">Registrar ${d.sel==="new"?"lote":"artículo"}</button><button class="btn ghost" id="clearDraft">Limpiar</button>`;
   $("#view-reg").innerHTML=`<div class="grid g2"><div class="panel">
@@ -794,7 +830,7 @@ function updatePrev(){
     el.querySelector("[data-prev]").innerHTML=`<span>Peso total <b>${nf(c.pesoTot,1)} g</b></span><span>Tiempo <b>${hm(c.min)}</b></span><span>Material <b>${money(c.costMat)}</b></span><span>Luz <b>${money(c.elec)}</b></span><span>Insumo <b>${money(c.ins)}</b></span><span>Venta <b>${money(c.venta)}</b></span><span>Neta <b class="${c.neta>=0?"pos":"neg"}">${money(c.neta)}</b></span>`});
 }
 $("#view-reg").addEventListener("input",e=>{const d=draft(),t=e.target;
-  if(t.id==="d-articulo")d.articulo=t.value;else if(t.id==="d-fecha")d.fecha=t.value;else if(t.id==="d-estado")d.estado=t.value;else if(t.id==="d-destino")d.destino=t.value;else if(t.id==="d-equipo")d.equipo=t.value;
+  if(t.id==="d-articulo")d.articulo=t.value;else if(t.id==="d-fecha")d.fecha=t.value;else if(t.id==="d-estado")d.estado=t.value;else if(t.id==="d-destino")d.destino=t.value;else if(t.id==="d-equipo")d.equipo=t.value;else if(t.id==="d-stlote"){d.stLote=t.value;t.className="in stsel st-"+STK[t.value]}
   else if(t.id==="d-sel"){d.sel=t.value;renderReg();return}
   else if(t.dataset.k){const a=d.arts[+t.closest(".art").dataset.i];a[t.dataset.k]=t.value}
   updatePrev()});
@@ -816,13 +852,13 @@ function commitDraft(){
   if(err.length)return toast(err[0],5000);
   const base=isNew?null:S.rows.find(r=>r.lote===d.sel);const id=isNew?nextLoteId():d.sel;
   for(const a of d.arts){const r={row:0,src:"new",dirty:true,lote:id,fecha:isNew?d.fecha:base.fecha,articulo:isNew?d.articulo.trim():base.articulo,desc:a.desc.trim(),cant:num(a.cant),item:a.item,
-    pesoU:num(a.pesoU),purga:num(a.purga)||0,min:artRow(a).min,estado:isNew?d.estado:base.estado,pv:num(a.pv)||0,destino:isNew?d.destino:base.destino,equipo:isNew?d.equipo:(base.equipo||base.eq),notas:a.notas.trim(),insumo:(a.insumo||"").trim(),insumoCosto:num(a.insC)||0};derive(r);S.rows.push(r)}
+    pesoU:num(a.pesoU),purga:num(a.purga)||0,min:artRow(a).min,estado:isNew?d.estado:base.estado,pv:num(a.pv)||0,destino:isNew?d.destino:base.destino,equipo:isNew?d.equipo:(base.equipo||base.eq),estLote:isNew?d.stLote:base.estLote,notas:a.notas.trim(),insumo:(a.insumo||"").trim(),insumoCosto:num(a.insC)||0};derive(r);S.rows.push(r)}
   S.draft=null;S.labelLote=id;toast(`${id} registrado. Guarda el Excel para escribirlo.`);renderAll();
 }
 
 function startEdit(id){requireUnlock(()=>{
   const rows=S.rows.filter(r=>r.lote===id);if(!rows.length)return;const f=rows[0];
-  S.draft={sel:"new",editId:id,articulo:f.articulo||f.desc,fecha:f.fecha||todayISO(),estado:f.estado||ESTADOS[0],destino:f.destino||DESTINOS[0],equipo:f.eq||S.equipos[0]?.name||"",
+  S.draft={sel:"new",editId:id,articulo:f.articulo||f.desc,fecha:f.fecha||todayISO(),estado:f.estado||ESTADOS[0],destino:f.destino||DESTINOS[0],equipo:f.eq||S.equipos[0]?.name||"",stLote:f.estLote||"Finalizado",
     arts:rows.map(r=>({desc:r.desc,cant:r.cant,item:r.item,pesoU:r.pesoU??"",purga:r.purga||0,h:Math.floor((r.min||0)/60),m:(r.min||0)%60||"",pv:r.pv||0,notas:r.notas||"",insumo:r.insumo||"",insC:r.insumoCosto||""}))};
   setTab("reg");window.scrollTo(0,0)})}
 function commitEdit(){
@@ -833,7 +869,7 @@ function commitEdit(){
   if(err.length)return toast(err[0],5000);
   const first=S.rows.findIndex(r=>r.lote===id);
   const nr=d.arts.map(a=>{const r={row:0,src:"edit",dirty:true,lote:id,fecha:d.fecha||todayISO(),articulo:d.articulo.trim(),desc:a.desc.trim(),cant:num(a.cant),item:a.item,
-    pesoU:num(a.pesoU),purga:num(a.purga)||0,min:artRow(a).min,estado:d.estado,pv:num(a.pv)||0,destino:d.destino,equipo:d.equipo,notas:a.notas.trim(),insumo:(a.insumo||"").trim(),insumoCosto:num(a.insC)||0};derive(r);return r});
+    pesoU:num(a.pesoU),purga:num(a.purga)||0,min:artRow(a).min,estado:d.estado,pv:num(a.pv)||0,destino:d.destino,equipo:d.equipo,estLote:d.stLote,notas:a.notas.trim(),insumo:(a.insumo||"").trim(),insumoCosto:num(a.insC)||0};derive(r);return r});
   S.rows=S.rows.filter(r=>r.lote!==id);S.rows.splice(Math.max(0,first),0,...nr);
   S.draft=null;S.labelLote=id;toast(`${id} actualizado. Guarda el Excel para escribirlo.`);setTab("dash");
 }
@@ -873,16 +909,17 @@ function renderLabel(){
     <div class="nf-row"><span>Precio de venta</span><span class="r">${money(l.venta)}</span></div>
     <div class="nf-row"><span><b>Ganancia neta</b></span><span class="r"><b>${money(l.neta)}</b></span></div>
     <div class="b8"></div>
-    <div class="nf-foot"><b>Equipo:</b> ${esc([...new Set(l.rows.map(r=>r.eq))].filter(Boolean).join(", ")||"—")}<br><b>Destino:</b> ${esc(l.destinos.join(", ")||"—")}<br><b>Estado:</b> ${esc(l.estados.join(", ")||"—")}${notas.length?`<br><b>Notas:</b> ${esc(notas.join(" · "))}`:""}<br>Ganancia neta = venta − material − electricidad − insumos.</div></div>`;
+    <div class="nf-foot"><b>Equipo:</b> ${esc([...new Set(l.rows.map(r=>r.eq))].filter(Boolean).join(", ")||"—")}<br><b>Estado del lote:</b> ${esc(l.status)}<br><b>Destino:</b> ${esc(l.destinos.join(", ")||"—")}<br><b>Estado:</b> ${esc(l.estados.join(", ")||"—")}${notas.length?`<br><b>Notas:</b> ${esc(notas.join(" · "))}`:""}<br>Ganancia neta = venta − material − electricidad − insumos.</div></div>`;
   $("#view-label").innerHTML=`<div class="labelwrap"><div class="nfcol">${label}</div><div>
     <div class="panel"><div class="panel-h"><h2>Ver otro lote</h2></div>
       <label class="f" for="labelSel">Lote</label><select class="in" id="labelSel" style="max-width:360px">${L.map(x=>`<option value="${esc(x.id)}" ${x.id===l.id?"selected":""}>${esc(x.id)} · ${esc(x.articulo)}</option>`).join("")}</select>
+      <label class="f" style="margin-top:12px">Estado del lote</label>${stSelect(l.id,l.status)}
       <div class="actions" style="margin-top:12px"><button class="btn" id="prevL">← Anterior</button><button class="btn" id="nextL">Siguiente →</button><button class="btn primary" id="printL">Imprimir etiqueta</button>${S.unlocked?`<button class="btn" id="editL">Editar lote</button><button class="btn danger" id="delL">Eliminar lote</button>`:""}</div></div>
     <div class="panel"><div class="panel-h"><h2>Qué significa la letra</h2></div><div class="legendbox">
       <div><span class="badge L-A">A</span> Producto terminado (venta u otro uso)</div><div><span class="badge L-E">E</span> Terminado para taller u hogar</div>
       <div><span class="badge L-P">P</span> Prueba</div><div><span class="badge L-D">D</span> Dañado o parcialmente dañado</div></div></div></div></div>`;
   const go=id=>{S.labelLote=id;renderLabel()},i=L.findIndex(x=>x.id===l.id);
-  $("#labelSel").onchange=e=>go(e.target.value);$("#prevL").onclick=()=>go(L[(i-1+L.length)%L.length].id);$("#nextL").onclick=()=>go(L[(i+1)%L.length].id);$("#printL").onclick=()=>window.print();if(S.unlocked){$("#editL").onclick=()=>startEdit(l.id);$("#delL").onclick=()=>deleteLote(l.id)}
+  $("#labelSel").onchange=e=>go(e.target.value);$("#view-label").onchange=e=>{const s=e.target.closest("[data-stlote]");if(s)setLoteStatus(s.dataset.stlote,s.value)};$("#prevL").onclick=()=>go(L[(i-1+L.length)%L.length].id);$("#nextL").onclick=()=>go(L[(i+1)%L.length].id);$("#printL").onclick=()=>window.print();if(S.unlocked){$("#editL").onclick=()=>startEdit(l.id);$("#delL").onclick=()=>deleteLote(l.id)}
 }
 
 /* ---- Equipos ---- */
