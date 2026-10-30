@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#181B21" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#E5E1D5" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0F0D0B" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="ENIGMA"><meta name="format-detection" content="telephone=no">
 <title>ENIGMA STUDIO</title>
@@ -11,7 +11,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#EEF0F3; --panel:#FFFFFF; --ink:#15181E; --mute:#5B6370; --line:#D8DCE2; --soft:#F5F6F8;
+  --bg:#E5E1D5; --panel:#FAF8F3; --ink:#191512; --mute:#625C52; --line:#CBC5B4; --soft:#EEEBE0;
+  --hdr-bg:#191512; --hdr-ink:#E5E1D5; --hdr-mute:#A39D90; --hdr-line:#3A342D; --hdr-accent:#8FA6FF;
   --accent:#2347D9; --accent-ink:#FFFFFF;
   --A:#0E8A4B; --P:#BF7400; --E:#2347D9; --D:#C0322B; --Q:#7C8491;
   --good:#0E8A4B; --bad:#C0322B;
@@ -19,7 +20,7 @@
   --label:"Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 @media (prefers-color-scheme:dark){
-  :root{ --bg:#101216; --panel:#181B21; --ink:#ECEEF2; --mute:#9AA2AF; --line:#2B3038; --soft:#1F232A;
+  :root{ --bg:#0F0D0B; --panel:#1C1814; --ink:#ECE8DD; --mute:#A39D90; --line:#332D26; --soft:#25201B;
     --accent:#6C8CFF; --accent-ink:#0B0E14; --A:#3FCB86; --P:#F0A53A; --E:#6C8CFF; --D:#FF7A70; --Q:#8B93A0; --good:#3FCB86; --bad:#FF7A70; }
 }
 *{box-sizing:border-box}
@@ -249,6 +250,28 @@ select.stsel{width:auto;min-width:150px;padding:5px 28px 5px 10px;border:1px sol
 #safariBar .btn{color:#15181E;background:#fff;border-color:#c9a24a}
 #safariBar .btn.primary{background:#2347D9;color:#fff;border-color:#2347D9}
 #safariBar .row2{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ===== paleta ENIGMA: piedra antigua #E5E1D5 + café obsidiana #191512 ===== */
+html{background:var(--bg)}
+@media(min-width:701px){
+  .top{background:var(--hdr-bg);border-bottom:1px solid var(--hdr-line)}
+  .top .brand{color:var(--hdr-ink)}
+  .top .tab{color:var(--hdr-mute)}
+  .top .tab:hover{color:var(--hdr-ink)}
+  .top .tab[aria-selected=true]{color:var(--hdr-ink);border-bottom-color:var(--hdr-accent)}
+  .top .btn{background:#26211C;color:var(--hdr-ink);border-color:var(--hdr-line)}
+  .top .btn:hover{background:#322B25}
+  .top .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+  .top .btn.ghost{background:none;border-color:transparent;color:var(--hdr-mute)}
+  .top .chip{color:var(--hdr-mute);border-color:var(--hdr-line)}
+  .top .chip.warn{color:#F0A53A;border-color:#F0A53A}
+}
+@media(max-width:700px){
+  .top{background:var(--bg);border-bottom:0}
+  .tabs{background:var(--hdr-bg)!important;border-top:1px solid var(--hdr-line);-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+  .tab{color:var(--hdr-mute)}
+  .tab[aria-selected=true]{color:var(--hdr-accent)}
+}
 </style>
 </head>
 <body>
