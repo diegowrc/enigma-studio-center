@@ -284,7 +284,9 @@ html{background:var(--bg)}
   </div>
   <nav class="tabs" role="tablist" id="tabs">
     <button class="tab" role="tab" data-tab="dash" aria-selected="true"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span>Dashboard</span></button>
+    <button class="tab" role="tab" data-tab="ana" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V4M4 20h16"/><path d="M8 15l4-4 3 3 5-6"/></svg><span>Análisis</span></button>
     <button class="tab" role="tab" data-tab="reg" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg><span>Registrar<span class="xl"> lote</span></span></button>
+    <button class="tab" role="tab" data-tab="quote" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 7.5h7M8.5 12h2M13.5 12h2M8.5 16h2M13.5 16h2"/></svg><span>Cotizar</span></button>
     <button class="tab" role="tab" data-tab="label" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h9l5 5v13H5z"/><path d="M14 3v5h5M8.5 13h7M8.5 17h5"/></svg><span>Etiqueta</span></button>
     <button class="tab" role="tab" data-tab="mat" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg><span>Inventario</span></button>
     <button class="tab" role="tab" data-tab="eq" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg><span>Equipos</span></button>
@@ -304,7 +306,9 @@ html{background:var(--bg)}
     <p class="hint" style="margin-top:16px" id="supportNote"></p>
   </section>
   <section id="view-dash" class="hidden"></section>
+  <section id="view-ana" class="hidden"></section>
   <section id="view-reg" class="hidden"></section>
+  <section id="view-quote" class="hidden"></section>
   <section id="view-label" class="hidden"></section>
   <section id="view-mat" class="hidden"></section>
   <section id="view-eq" class="hidden"></section>
@@ -741,10 +745,10 @@ function renderAll(){
   const loaded=!!S.buf;
   document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tab===S.tab)));
   $("#view-empty").classList.toggle("hidden",loaded);
-  for(const v of ["dash","reg","label","mat","eq"])$("#view-"+v).classList.toggle("hidden",!loaded||S.tab!==v);
+  for(const v of ["dash","ana","reg","quote","label","mat","eq"])$("#view-"+v).classList.toggle("hidden",!loaded||S.tab!==v);
   renderFilebar();
   if(!loaded)return;
-  ({dash:renderDash,reg:renderReg,label:renderLabel,mat:renderMat,eq:renderEq})[S.tab]();labelize();
+  ({dash:renderDash,ana:renderAna,reg:renderReg,quote:renderQuote,label:renderLabel,mat:renderMat,eq:renderEq})[S.tab]();labelize();
 }
 function labelize(){document.querySelectorAll(".tbl").forEach(tb=>{const h=[...tb.querySelectorAll("thead th")].map(x=>x.textContent.trim());
   tb.querySelectorAll("tbody tr").forEach(tr=>[...tr.children].forEach((td,i)=>td.setAttribute("data-label",h[i]||"")))})}
@@ -986,6 +990,145 @@ function renderLabel(){
   const go=id=>{S.labelLote=id;renderLabel()},i=L.findIndex(x=>x.id===l.id);
   $("#labelSel").onchange=e=>go(e.target.value);$("#view-label").onchange=e=>{const s=e.target.closest("[data-stlote]");if(s)setLoteStatus(s.dataset.stlote,s.value)};$("#prevL").onclick=()=>go(L[(i-1+L.length)%L.length].id);$("#nextL").onclick=()=>go(L[(i+1)%L.length].id);$("#printL").onclick=()=>window.print();if(S.unlocked){$("#editL").onclick=()=>startEdit(l.id);$("#delL").onclick=()=>deleteLote(l.id)}
 }
+
+
+
+/* ---- Análisis de flujo (g/min) ---- */
+function renderAna(){
+  const L=lotes().filter(l=>l.min>0&&l.g>0).map(l=>({...l,purga:l.rows.reduce((a,r)=>a+(r.purga||0),0),flow:l.g/l.min}));
+  if(!L.length){$("#view-ana").innerHTML=`<div class="panel"><p class="muted">Aún no hay lotes con tiempo y peso registrados.</p></div>`;return}
+  const G=L.reduce((a,l)=>a+l.g,0),T=L.reduce((a,l)=>a+l.min,0),P=L.reduce((a,l)=>a+l.purga,0),mean=G/T;
+  const fl=L.map(l=>l.flow),avgFl=fl.reduce((a,v)=>a+v,0)/fl.length;
+  const sd=Math.sqrt(fl.reduce((a,v)=>a+(v-avgFl)**2,0)/fl.length),cv=avgFl?sd/avgFl*100:0;
+  const sorted=[...fl].sort((a,b)=>a-b),med=sorted.length%2?sorted[(sorted.length-1)/2]:(sorted[sorted.length/2-1]+sorted[sorted.length/2])/2;
+  const n=L.length,mx=L.reduce((a,l)=>a+l.min,0)/n,my=L.reduce((a,l)=>a+l.g,0)/n;
+  const sxx=L.reduce((a,l)=>a+(l.min-mx)**2,0),syy=L.reduce((a,l)=>a+(l.g-my)**2,0),sxy=L.reduce((a,l)=>a+(l.min-mx)*(l.g-my),0);
+  const r2=n>=3&&sxx>0&&syy>0?sxy*sxy/(sxx*syy):null,slope=sxx>0?sxy/sxx:null,icpt=slope!=null?my-slope*mx:null;
+  const verdict=cv<15?"Muy uniforme: casi todos los lotes consumen material al mismo ritmo.":cv<30?"Moderadamente uniforme: hay diferencias, pero no extremas.":"Muy variable: el ritmo cambia bastante entre lotes.";
+  const maxL=L.reduce((a,l)=>l.flow>a.flow?l:a,L[0]),minL=L.reduce((a,l)=>l.flow<a.flow?l:a,L[0]);
+  const stats=`<div class="stats">
+    <div class="stat"><b>${nf(mean,3)}</b><span>g/min promedio global</span><small>${nf(G,0)} g en ${nf(T/60,1)} h</small></div>
+    <div class="stat"><b>${nf(med,3)}</b><span>g/min mediana</span><small>entre ${L.length} lotes</small></div>
+    <div class="stat"><b>${nf(minL.flow,3)}–${nf(maxL.flow,3)}</b><span>rango g/min</span><small>${esc(minL.id)} el más lento · ${esc(maxL.id)} el más rápido</small></div>
+    <div class="stat"><b>${nf(cv,1)} %</b><span>variación (CV)</span><small>menor = más parejo</small></div>
+    <div class="stat"><b>${r2==null?"—":nf(r2,2)}</b><span>R² gramos vs tiempo</span><small>${r2==null?"faltan lotes":"1 = proporción perfecta"}</small></div>
+    <div class="stat"><b>${nf(P/G*100,1)} %</b><span>del material es purga</span><small>${nf(P,0)} g de ${nf(G,0)} g</small></div></div>`;
+  // dispersión
+  const W=640,H=330,m={l:58,r:18,t:14,b:42};
+  const xt=niceTicks(0,Math.max(...L.map(l=>l.min))),yt=niceTicks(0,Math.max(...L.map(l=>l.g)));
+  const xmax=xt.at(-1),ymax=yt.at(-1),{Y,g:grid}=chartFrame(yt,v=>nf(v,0),W,H,m),X=v=>m.l+v/xmax*(W-m.l-m.r);
+  let sc=`<svg class="chart" viewBox="0 0 ${W} ${H}" role="img">${grid}`;
+  for(const t of xt)sc+=`<text x="${X(t)}" y="${H-22}" text-anchor="middle">${nf(t,0)}</text>`;
+  sc+=`<text x="${(m.l+W-m.r)/2}" y="${H-4}" text-anchor="middle">Tiempo de impresión (min)</text><text x="14" y="${(m.t+H-m.b)/2}" text-anchor="middle" transform="rotate(-90 14 ${(m.t+H-m.b)/2})">Material total: usado + purga (g)</text>`;
+  const xe=Math.min(xmax,ymax/mean);
+  sc+=`<line x1="${X(0)}" y1="${Y(0)}" x2="${X(xe)}" y2="${Y(mean*xe)}" stroke="var(--P)" stroke-width="2" stroke-dasharray="6 4"/>`;
+  for(const l of L)sc+=`<circle cx="${X(l.min)}" cy="${Y(l.g)}" r="5" fill="var(--accent)" fill-opacity=".85" stroke="var(--panel)" stroke-width="1.5"/><circle cx="${X(l.min)}" cy="${Y(l.g)}" r="14" fill="transparent" data-tip="<b>${esc(l.id)} · ${esc(l.articulo)}</b><br>${hm(l.min)} · ${nf(l.g,1)} g<br>${nf(l.flow,3)} g/min"/>`;
+  sc+="</svg>";
+  // por lote
+  const labels=L.map(l=>l.id);
+  const line=lineChart(labels,[{name:"g/min por lote",color:"var(--accent)",values:fl,w:3},{name:"Promedio global",color:"var(--P)",values:fl.map(()=>mean),w:2}],
+    {fmt:v=>nf(v,2),tipFn:i=>`<b>${esc(L[i].id)} · ${esc(L[i].articulo)}</b><br>${nf(L[i].flow,3)} g/min<br>${hm(L[i].min)} · ${nf(L[i].g,1)} g`});
+  const flag=f=>{const d=(f/mean-1)*100;return Math.abs(d)<=25?`<span class="tag">normal</span>`:d>0?`<span class="tag" style="color:var(--P);border-color:var(--P)">más material por minuto</span>`:`<span class="tag" style="color:var(--E);border-color:var(--E)">menos material por minuto</span>`};
+  const trs=L.map(l=>{const d=(l.flow/mean-1)*100;
+    return `<tr><td><b>${esc(l.id)}</b></td><td>${esc(l.articulo)}</td><td class="num">${hm(l.min)}</td><td class="num">${nf(l.g,1)} g</td><td class="num">${nf(l.purga,1)} g</td><td class="num"><b>${nf(l.flow,3)}</b></td><td class="num">${nf((l.g-l.purga)/l.min,3)}</td><td class="num ${d>=0?"pos":"neg"}">${d>=0?"+":""}${nf(d,0)} %</td><td>${flag(l.flow)}</td></tr>`}).join("");
+  // agrupaciones
+  const grp=(keyFn,title,name)=>{const M={};for(const r of S.rows){if(!(r.min>0)||!(r.pesoTot>0))continue;const k=keyFn(r)||"—";(M[k]??={g:0,min:0,p:0,l:new Set()});M[k].g+=r.pesoTot;M[k].min+=r.min;M[k].p+=r.purga||0;M[k].l.add(r.lote)}
+    const rows=Object.entries(M).sort((a,b)=>b[1].g/b[1].min-a[1].g/a[1].min).map(([k,v])=>`<tr><td><b>${esc(k)}</b></td><td class="num">${v.l.size}</td><td class="num">${nf(v.g,0)} g</td><td class="num">${hm(v.min)}</td><td class="num"><b>${nf(v.g/v.min,3)}</b></td></tr>`).join("");
+    return `<div class="panel"><div class="panel-h"><h2>${title}</h2></div><div class="scroll"><table class="tbl"><thead><tr><th>${name}</th><th class="num">Lotes</th><th class="num">Material total</th><th class="num">Tiempo</th><th class="num">g/min</th></tr></thead><tbody>${rows}</tbody></table></div></div>`};
+  $("#view-ana").innerHTML=stats+
+  `<div class="panel"><div class="panel-h"><h2>¿Todos los lotes tienen la misma relación?</h2></div>
+    <p style="margin:0 0 6px"><b>${verdict}</b></p>
+    <p class="hint" style="margin:0">Flujo = (material usado + purga) ÷ minutos de impresión. ${r2!=null?`Ajuste lineal: cada minuto extra suma unos ${nf(slope,3)} g (R² ${nf(r2,2)}). `:""}Los lotes se marcan si se alejan más de 25 % del promedio global (${nf(mean,3)} g/min).</p></div>
+   <div class="grid g2e"><div class="panel"><div class="panel-h"><h2>Material vs. tiempo</h2><span class="muted">Cada punto es un lote; la línea naranja es el promedio global</span></div>${sc}</div>
+   <div class="panel"><div class="panel-h"><h2>Flujo por lote (g/min)</h2></div><div class="legend"><span><i style="background:var(--accent);height:4px"></i>g/min</span><span><i style="background:var(--P)"></i>Promedio global</span></div>${line}</div></div>
+   <div class="panel"><div class="panel-h"><h2>Detalle por lote</h2><span class="muted">«Sin purga» solo cuenta el material que quedó en las piezas</span></div>
+    <div class="scroll"><table class="tbl"><thead><tr><th>Lote</th><th>Artículo</th><th class="num">Tiempo</th><th class="num">Material total</th><th class="num">Purga</th><th class="num">g/min</th><th class="num">g/min sin purga</th><th class="num">vs. promedio</th><th></th></tr></thead><tbody>${trs}</tbody></table></div></div>
+   <div class="grid g2e">${grp(r=>r.tipo?`${r.tipo}${r.color?" · "+r.color:""}`:r.item,"Por material","Material")}${grp(r=>r.eq,"Por equipo","Equipo")}</div>`;
+}
+
+/* ---- Cotizar ---- */
+function qd(){return S.quote??={name:"",margen:30,arts:[blankArt()]}}
+function quoteCalc(){
+  const q=qd(),m=(num(q.margen)||0)/100,U=usage();
+  return q.arts.map(a=>{
+    const c=artRow(a),cant=num(a.cant)||0,cost=c.costMat+c.elec+c.ins,unitCost=cant?cost/cant:0,sug=unitCost*(1+m),pv=num(a.pv)||0,price=pv>0?pv:sug,rev=price*cant;
+    const it=c.it,pu=num(a.pesoU)||0,pg=num(a.purga)||0;let max=null;
+    if(it&&it.bob>0&&pu>0){const left=it.bob*it.peso-(U[it.code]||0);max=Math.max(0,Math.floor((left-pg)/pu))}
+    const ii=a.insCode?insByCode(a.insCode):null,iq=num(a.insQ)||0;
+    if(ii&&cant>0&&iq>0){const mi=Math.max(0,Math.floor(insLeft(ii.code)/(iq/cant)));max=max==null?mi:Math.min(max,mi)}
+    return {a,c,cant,cost,unitCost,sug,price,rev,usedSug:!(pv>0),max,neta:rev-cost};
+  });
+}
+function renderQuote(){
+  const q=qd();
+  const optsFor=cur=>S.items.filter(i=>i.peso||i.code===cur).map(i=>`<option value="${esc(i.code)}" ${i.code===cur?"selected":""}>${esc(i.code)} · ${esc(i.color)} ${esc(i.tipo)}</option>`).join("");
+  const arts=q.arts.map((a,i)=>`<div class="art" data-i="${i}">
+    <div class="art-h"><h3>Artículo ${i+1}</h3>${q.arts.length>1?`<button class="btn small ghost" data-qdel="${i}">Quitar</button>`:""}</div>
+    <div class="row r2"><div><label class="f">Descripción</label><input class="in" data-k="desc" value="${esc(a.desc)}" placeholder="Ej. Porta vasos"></div>
+      <div><label class="f">Material</label><select class="in" data-k="item">${optsFor(a.item)}</select></div></div>
+    <div class="row r4"><div><label class="f">Cantidad</label><input class="in" type="number" min="1" step="1" data-k="cant" value="${esc(a.cant)}"></div>
+      <div><label class="f">Peso por unidad (g)</label><input class="in" type="number" min="0" step="0.01" data-k="pesoU" value="${esc(a.pesoU)}"></div>
+      <div><label class="f">Purga estimada (g)</label><input class="in" type="number" min="0" step="0.01" data-k="purga" value="${esc(a.purga)}"></div>
+      <div><label class="f">Precio de venta por unidad ($)</label><input class="in" type="number" min="0" step="0.01" data-k="pv" value="${esc(a.pv)}" placeholder="vacío = sugerido"></div></div>
+    <div class="row r3"><div><label class="f">Tiempo total: horas</label><input class="in" type="number" min="0" step="1" data-k="h" value="${esc(a.h)}"></div>
+      <div><label class="f">Tiempo total: minutos</label><input class="in" type="number" min="0" max="59" step="1" data-k="m" value="${esc(a.m)}"></div><div></div></div>
+    <div class="row r3"><div><label class="f">Insumo del inventario</label><select class="in" data-k="insCode"><option value="">Ninguno / otro (manual)</option>${S.insumos.map(x=>`<option value="${esc(x.code)}" ${x.code===a.insCode?"selected":""}>${esc(x.code)} · ${esc(x.name)} (quedan ${nf(insLeft(x.code),0)})</option>`).join("")}</select></div>
+      ${a.insCode?`<div><label class="f">Cantidad total a usar</label><input class="in" type="number" min="0" step="1" data-k="insQ" value="${esc(a.insQ)}"></div><div></div>`
+      :`<div><label class="f">Descripción del insumo extra</label><input class="in" data-k="insumo" value="${esc(a.insumo)}" placeholder="Ej. Aro metálico"></div><div><label class="f">Costo del insumo ($, total)</label><input class="in" type="number" min="0" step="0.01" data-k="insC" value="${esc(a.insC)}"></div>`}</div>
+    <div class="prev" data-qprev></div></div>`).join("");
+  $("#view-quote").innerHTML=`<div class="grid g2"><div class="panel">
+    <div class="panel-h"><h2>Cotización</h2><span class="tag">solo estimado, no se guarda en el Excel</span></div>
+    <div class="row r2"><div><label class="f">Nombre del trabajo</label><input class="in" id="q-name" value="${esc(q.name)}" placeholder="Ej. Pedido de porta vasos"></div>
+      <div><label class="f">Margen de ganancia deseado (%)</label><input class="in" type="number" min="0" step="1" id="q-margen" value="${esc(q.margen)}"></div></div>
+    ${arts}
+    <div class="actions"><button class="btn" id="qAdd">+ Añadir artículo</button><button class="btn primary" id="qToLote">Pasar a Registrar lote</button><button class="btn ghost" id="qClear">Limpiar</button></div>
+    <p class="hint" style="margin-top:12px">El precio sugerido = costo por unidad × (1 + margen). Si escribes un precio de venta, se usa ese en lugar del sugerido.</p></div>
+    <div class="panel"><div class="panel-h"><h2>Resultado estimado</h2></div><div id="qres"></div></div></div>`;
+  updateQuote();
+}
+function updateQuote(){
+  const q=qd(),R=quoteCalc(),U=usage();
+  document.querySelectorAll("#view-quote .art").forEach(el=>{const r=R[+el.dataset.i];
+    el.querySelector("[data-qprev]").innerHTML=`<span>Peso total <b>${nf(r.c.pesoTot,1)} g</b></span><span>Costo <b>${money(r.cost)}</b></span><span>Costo/unidad <b>${money(r.unitCost)}</b></span><span>${r.usedSug?"Precio sugerido":"Precio"} <b>${money(r.price)}</b></span>`});
+  const sum=f=>R.reduce((a,r)=>a+f(r),0);
+  const g=sum(r=>r.c.pesoTot),min=sum(r=>r.c.min),cost=sum(r=>r.cost),rev=sum(r=>r.rev),neta=rev-cost,elec=sum(r=>r.c.elec),ins=sum(r=>r.c.ins),mat=sum(r=>r.c.costMat),units=sum(r=>r.cant);
+  const mreal=rev?neta/rev*100:0;
+  // materiales
+  const M={};for(const r of R){const it=r.c.it;if(!it)continue;(M[it.code]??={it,g:0}).g+=r.c.pesoTot}
+  const mats=Object.values(M).map(({it,g:gg})=>{const left=it.bob*it.peso-(U[it.code]||0),ok=it.bob>0&&left>=gg;
+    return `<tr><td><i class="sw" style="background:${swatch(it.color)};display:inline-block;vertical-align:middle;margin-right:6px"></i><b>${esc(it.code)}</b></td><td class="num">${nf(gg,1)} g</td><td class="num">${it.peso?nf(gg/it.peso*100,0)+"%":"—"}</td><td class="num">${it.bob>0?nf(Math.max(0,left),0)+" g":"sin bobinas registradas"}</td><td class="${ok?"pos":"neg"}">${ok?"Alcanza":it.bob>0?"Faltan "+nf(gg-left,0)+" g":"Revisa inventario"}</td></tr>`}).join("");
+  // insumos
+  const I={};for(const r of R){if(!r.a.insCode)continue;(I[r.a.insCode]??=0);I[r.a.insCode]+=num(r.a.insQ)||0}
+  const insr=Object.entries(I).map(([c,n])=>{const i=insByCode(c),left=insLeft(c),ok=left>=n;
+    return `<tr><td><b>${esc(c)}</b> ${esc(i?.name||"")}</td><td class="num">${nf(n,0)}</td><td class="num">${nf(left,0)}</td><td class="${ok?"pos":"neg"}">${ok?"Alcanza":"Faltan "+nf(n-left,0)}</td></tr>`}).join("");
+  const maxr=R.filter(r=>r.max!=null).map(r=>`<div class="nf-sm" style="margin-top:4px">${esc(r.a.desc||"Artículo")}: con tu stock actual podrías hacer hasta <b>${nf(r.max,0)}</b> unidades (pides ${nf(r.cant,0)}).</div>`).join("");
+  const rows=R.map(r=>`<tr><td>${esc(r.a.desc||"—")} <b>×${nf(r.cant,0)}</b></td><td class="num">${money(r.unitCost)}</td><td class="num">${money(r.price)}${r.usedSug?' <span class="tag">sugerido</span>':""}</td><td class="num">${money(r.rev)}</td><td class="num ${r.neta>=0?"pos":"neg"}">${money(r.neta)}</td></tr>`).join("");
+  $("#qres").innerHTML=`<div class="stats" style="grid-template-columns:repeat(2,1fr)">
+    <div class="stat"><b>${nf(g,1)} g</b><span>filamento a consumir</span><small>${units} unidades</small></div>
+    <div class="stat"><b>${hm(min)}</b><span>tiempo de impresión</span><small>${nf(S.equipos.length?min/60:0,1)} h</small></div>
+    <div class="stat"><b>${money(cost)}</b><span>costo total estimado</span><small>material ${money(mat)} · luz ${money(elec)} · insumos ${money(ins)}</small></div>
+    <div class="stat"><b>${money(rev)}</b><span>a poner a la venta</span><small>${q.name?esc(q.name):"total de la cotización"}</small></div>
+    <div class="stat"><b class="${neta>=0?"pos":"neg"}">${money(neta)}</b><span>ganancia neta</span><small>margen real ${nf(mreal,1)}%</small></div></div>
+    <div class="scroll" style="margin-top:14px"><table class="tbl"><thead><tr><th>Artículo</th><th class="num">Costo/unidad</th><th class="num">Precio/unidad</th><th class="num">Venta</th><th class="num">Ganancia</th></tr></thead><tbody>${rows}</tbody></table></div>
+    ${mats?`<h3 style="margin:16px 0 6px">Consumo de filamento vs. inventario</h3><div class="scroll"><table class="tbl"><thead><tr><th>Material</th><th class="num">Necesitas</th><th class="num">De una bobina</th><th class="num">Te queda</th><th>Estado</th></tr></thead><tbody>${mats}</tbody></table></div>`:""}
+    ${insr?`<h3 style="margin:16px 0 6px">Insumos vs. inventario</h3><div class="scroll"><table class="tbl"><thead><tr><th>Insumo</th><th class="num">Necesitas</th><th class="num">Te queda</th><th>Estado</th></tr></thead><tbody>${insr}</tbody></table></div>`:""}
+    ${maxr?`<h3 style="margin:16px 0 4px">Cuánto podrías producir</h3>${maxr}<p class="hint">Cada artículo se calcula por separado con el stock actual.</p>`:""}`;
+  labelize();
+}
+$("#view-quote").addEventListener("input",e=>{const q=qd(),t=e.target;
+  if(t.id==="q-name")q.name=t.value;else if(t.id==="q-margen")q.margen=t.value;
+  else if(t.dataset.k){const a=q.arts[+t.closest(".art").dataset.i];a[t.dataset.k]=t.value;if(t.dataset.k==="insCode"){renderQuote();return}}
+  else return;
+  updateQuote()});
+$("#view-quote").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const q=qd();
+  if(b.id==="qAdd"){q.arts.push(blankArt());renderQuote()}
+  else if(b.dataset.qdel!==undefined){q.arts.splice(+b.dataset.qdel,1);renderQuote()}
+  else if(b.id==="qClear"){S.quote=null;renderQuote()}
+  else if(b.id==="qToLote"){
+    const R=quoteCalc();
+    S.draft={sel:"new",articulo:q.name,fecha:todayISO(),estado:"Producto terminado",destino:"VENTA",stLote:"Pendiente",editId:null,equipo:S.equipos[0]?.name||"",
+      arts:q.arts.map((a,i)=>({...a,pv:R[i].price?+R[i].price.toFixed(2):0}))};
+    setTab("reg");toast("Cotización copiada a Registrar lote. Revisa y registra.")}});
 
 /* ---- Equipos ---- */
 function eqStats(name){const rs=S.rows.filter(r=>r.eq===name),sum=k=>rs.reduce((a,r)=>a+(r[k]||0),0);
