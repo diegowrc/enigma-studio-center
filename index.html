@@ -998,11 +998,23 @@ function draft(){return S.draft??={sel:"new",articulo:"",fecha:todayISO(),estado
 function optList(list,val){const l=val&&!list.includes(val)?[...list,val]:list;return l.map(e=>`<option ${e===val?"selected":""}>${esc(e)}</option>`).join("")}
 function loteProdsPanel(id){
   const rows=S.rows.filter(r=>r.lote===id);if(!rows.length)return "";
-  const ps=prodsFromRows(rows),T=ps.map(prodCalc);
-  const tr=ps.map((p,i)=>{const P=T[i];return `<tr><td><b>${esc(p.name)}</b></td><td class="num">${nf(P.qty,0)}</td><td class="num">${hm(P.min)}</td><td class="num">${nf(P.pesoTot,1)} g</td><td class="num">${money(P.venta)}</td></tr>`}).join("");
+  const ps=prodsFromRows(rows),T=ps.map(prodCalc),keys=[...new Set(rows.map(instKey))];
+  const tr=ps.map((p,i)=>{const P=T[i];return `<tr><td><b>${esc(p.name)}</b></td><td class="num">${nf(P.qty,0)}</td><td class="num">${hm(P.min)}</td><td class="num">${nf(P.pesoTot,1)} g</td><td class="num">${money(P.venta)}</td><td class="num"><button type="button" class="btn small danger" data-delprod="${esc(keys[i])}" title="Quitar este producto del lote" aria-label="Quitar ${esc(p.name)}">✕</button></td></tr>`}).join("");
   return `<div class="art"><div class="art-h"><h3>Ya registrado en ${esc(id)}</h3><span class="tag">${ps.length} producto${ps.length===1?"":"s"}</span></div>
-    <div class="scroll"><table class="tbl"><thead><tr><th>Producto</th><th class="num">Cantidad</th><th class="num">Tiempo</th><th class="num">Filamento</th><th class="num">Venta</th></tr></thead><tbody>${tr}</tbody></table></div></div>`;
+    <div class="scroll"><table class="tbl"><thead><tr><th>Producto</th><th class="num">Cantidad</th><th class="num">Tiempo</th><th class="num">Filamento</th><th class="num">Venta</th><th></th></tr></thead><tbody>${tr}</tbody></table></div></div>`;
 }
+function delLoteProd(id,key){requireUnlock(()=>{
+  const rows=S.rows.filter(r=>r.lote===id),gone=rows.filter(r=>instKey(r)===key);
+  if(!gone.length)return;
+  const rest=rows.filter(r=>instKey(r)!==key);
+  if(!rest.length)return deleteLote(id);
+  const nm=gone[0].producto||gone[0].desc||"este producto";
+  if(!confirm(`¿Quitar «${nm}» del lote ${id}? Se quitará del Excel cuando guardes.`))return;
+  S.rows=S.rows.filter(r=>!(r.lote===id&&instKey(r)===key));
+  const ids=[...new Set(rest.filter(r=>r.producto).map(r=>r.pidx||0))].sort((a,b)=>a-b);
+  rest.forEach(r=>{if(r.producto)r.pidx=ids.indexOf(r.pidx||0)+1;r.dirty=true});
+  toast(`«${nm}» quitado de ${id}. Guarda el Excel para aplicarlo.`);renderAll();
+})}
 function renderReg(){
   const d=draft(),ed=!!d.editId,existing=[...new Set(S.rows.map(r=>r.lote))];
   const head=ed?`<div class="row r4"><div><label class="f">Nombre del lote o pedido</label><input class="in" id="d-articulo" value="${esc(d.articulo)}"></div>
@@ -1044,7 +1056,8 @@ $("#view-reg").addEventListener("input",e=>{const d=draft(),t=e.target;
     renderReg()}});
 $("#view-reg").addEventListener("change",e=>{if(e.target.id==="addProd"&&pickProd(e.target.value,draft().prods))renderReg()});
 $("#view-reg").addEventListener("click",e=>{const d=draft(),b=e.target.closest("button");if(!b)return;
-  if(b.id==="clearDraft"){S.draft=null;renderReg()}
+  if(b.dataset.delprod){delLoteProd(d.sel,b.dataset.delprod)}
+  else if(b.id==="clearDraft"){S.draft=null;renderReg()}
   else if(b.dataset.undo){S.rows=S.rows.filter(r=>!(r.dirty&&r.lote===b.dataset.undo));renderAll()}
   else if(b.id==="discardAll"){if(confirm("¿Descartar todos los cambios sin guardar?"))safeLoad(S.buf,S.fileName)}
   else if(b.id==="saveEdit")commitEdit()
@@ -1080,7 +1093,7 @@ function deleteLote(id){requireUnlock(()=>{
   if(!confirm(`¿Eliminar el lote ${id} (${n} artículo${n>1?"s":""})? Se quitará del Excel cuando guardes.`))return;
   if(S.fileLotes.has(id))S.deleted++;
   S.rows=S.rows.filter(r=>r.lote!==id);
-  if(S.draft?.editId===id)S.draft=null;
+  if(S.draft?.editId===id||S.draft?.sel===id)S.draft=null;
   if(S.labelLote===id)S.labelLote=S.rows.length?S.rows.at(-1).lote:null;
   toast(`${id} eliminado. Guarda el Excel para aplicarlo.`);renderAll();
 })}
