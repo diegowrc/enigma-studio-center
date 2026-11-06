@@ -122,6 +122,10 @@ label.f{display:block;font-size:13px;font-weight:600;color:var(--mute);margin-bo
 .art{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px;background:var(--soft)}
 .art .in{background:var(--panel)}
 .art-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.prod{border:2px solid var(--line);border-radius:12px;padding:16px;margin-bottom:18px}
+.prod-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.prod-h h3{margin:0}.pname{padding:9px 0}
+.prev-p{border-top:1px solid var(--line);margin-top:4px;padding-top:10px}
 .prev{font-size:13px;color:var(--mute);display:flex;gap:16px;flex-wrap:wrap;padding-top:4px}
 .prev b{color:var(--ink);font-variant-numeric:tabular-nums}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
@@ -191,10 +195,12 @@ html{-webkit-text-size-adjust:100%}
   .panel{padding:14px}
   .empty{padding:44px 14px}
   .tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;justify-content:space-around;gap:0;overflow:visible;
-    background:var(--panel);border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+    background:var(--panel);border-top:1px solid var(--line);padding:6px 2px calc(6px + env(safe-area-inset-bottom))}
   @supports ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
     .tabs{background:color-mix(in srgb,var(--panel) 88%,transparent);-webkit-backdrop-filter:saturate(180%) blur(18px);backdrop-filter:saturate(180%) blur(18px)}}
-  .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;margin:0;border:0;min-height:50px;font-size:11px;font-weight:600}
+  .tab{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;margin:0;border:0;min-height:50px;font-size:10px;letter-spacing:-.2px;font-weight:600}
+  .tab span{max-width:100%;overflow:hidden;text-overflow:ellipsis}
+  @media(max-width:400px){.tab{font-size:9px;letter-spacing:-.3px}}
   .tab[aria-selected=true]{border:0;color:var(--accent)}
   .ti{display:block;width:25px;height:25px}
   .xl{display:none}
@@ -207,7 +213,6 @@ html{-webkit-text-size-adjust:100%}
   .stat{padding:12px 14px}.stat b{font-size:22px}
   .labelwrap{gap:18px}.nf{max-width:100%}
   .actions .btn{flex:1 1 auto}
-  .tbl.cards-off{display:table}
   .tbl,.tbl tbody,.tbl tr,.tbl td{display:block;width:100%}
   .tbl thead{display:none}
   .tbl tbody tr{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:10px;background:var(--panel)}
@@ -286,6 +291,7 @@ html{background:var(--bg)}
     <button class="tab" role="tab" data-tab="dash" aria-selected="true"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span>Dashboard</span></button>
     <button class="tab" role="tab" data-tab="ana" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V4M4 20h16"/><path d="M8 15l4-4 3 3 5-6"/></svg><span>Análisis</span></button>
     <button class="tab" role="tab" data-tab="reg" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg><span>Registrar<span class="xl"> lote</span></span></button>
+    <button class="tab" role="tab" data-tab="prod" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg><span>Productos</span></button>
     <button class="tab" role="tab" data-tab="quote" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 7.5h7M8.5 12h2M13.5 12h2M8.5 16h2M13.5 16h2"/></svg><span>Cotizar</span></button>
     <button class="tab" role="tab" data-tab="label" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h9l5 5v13H5z"/><path d="M14 3v5h5M8.5 13h7M8.5 17h5"/></svg><span>Etiqueta</span></button>
     <button class="tab" role="tab" data-tab="mat" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg><span>Inventario</span></button>
@@ -309,6 +315,7 @@ html{background:var(--bg)}
   <section id="view-ana" class="hidden"></section>
   <section id="view-reg" class="hidden"></section>
   <section id="view-quote" class="hidden"></section>
+  <section id="view-prod" class="hidden"></section>
   <section id="view-label" class="hidden"></section>
   <section id="view-mat" class="hidden"></section>
   <section id="view-eq" class="hidden"></section>
@@ -340,6 +347,27 @@ https://github.com/nodeca/pako/blob/main/LICENSE
 const $=(s,r=document)=>r.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const NS="http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+/* Crea una hoja nueva en el libro. cols: anchos; hdr: encabezados; rows: filas de celdas [valor,estilo] (número = numérico) */
+function sheetXml(cols,hdr,rows){
+  const X=t=>String(t??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const L=i=>"ABCDEFGHIJKLMNOPQRSTUVWXYZ"[i];
+  const cell=(ref,v,st)=>typeof v==="number"?`<c r="${ref}" s="${st}"><v>${v}</v></c>`:v===""||v==null?"":`<c r="${ref}" t="inlineStr" s="${st}"><is><t xml:space="preserve">${X(v)}</t></is></c>`;
+  let rx=`<row r="1">${hdr.map((h,i)=>cell(L(i)+"1",h,10)).join("")}</row>`;
+  rows.forEach((r,k)=>{rx+=`<row r="${k+2}">${r.map(([v,st],i)=>cell(L(i)+(k+2),v,st)).join("")}</row>`});
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<worksheet xmlns="${NS}"><dimension ref="A1:${L(hdr.length-1)}${rows.length+1}"/><sheetViews><sheetView workbookViewId="0"/></sheetViews><sheetFormatPr defaultRowHeight="15"/><cols>${cols.map((w,i)=>`<col min="${i+1}" max="${i+1}" width="${w}" customWidth="1"/>`).join("")}</cols><sheetData>${rx}</sheetData></worksheet>`;
+}
+async function addSheet(zip,name,cols,hdr,rows){
+  const xml=sheetXml(cols,hdr,rows);
+  let k=1;while(zip.file(`xl/worksheets/sheet${k}.xml`))k++;const pth=`xl/worksheets/sheet${k}.xml`;
+  const wbx=await zip.file("xl/workbook.xml").async("string");if(!wbx.includes("</sheets>"))throw new Error(`No pude añadir la hoja ${name} al libro.`);
+  const rl=await zip.file("xl/_rels/workbook.xml.rels").async("string"),ct=await zip.file("[Content_Types].xml").async("string");
+  const sid=Math.max(0,...[...wbx.matchAll(/sheetId="(\d+)"/g)].map(m=>+m[1]))+1;
+  const rid="rId"+(Math.max(0,...[...rl.matchAll(/Id="rId(\d+)"/g)].map(m=>+m[1]))+1);
+  zip.file(pth,xml);
+  zip.file("xl/workbook.xml",wbx.replace("</sheets>",`<sheet xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" name="${name}" sheetId="${sid}" r:id="${rid}"/></sheets>`));
+  zip.file("xl/_rels/workbook.xml.rels",rl.replace("</Relationships>",`<Relationship Id="${rid}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${k}.xml"/></Relationships>`));
+  zip.file("[Content_Types].xml",ct.replace("</Types>",`<Override PartName="/${pth}" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>`));
+}
 const num=v=>{const n=typeof v==="number"?v:parseFloat(String(v??"").replace(",","."));return isFinite(n)?n:null};
 const nf=(n,d=0)=>Number(n||0).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d});
 const money=n=>(n<0?"−$":"$")+Math.abs(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -365,7 +393,7 @@ const normSt=v=>{const t=String(v||"").trim().toLowerCase();return ESTLOTE.find(
 
 /* ============ estado ============ */
 const S={buf:null,fileName:"",handle:null,rows:[],items:[],itemMap:{},tariff:0.091,tariffDirty:false,
-  lastRow:1,lastItemRow:1,paths:{},tab:"dash",labelLote:null,draft:null,editCode:null,unlocked:false,deleted:0,fileLotes:new Set(),equipos:[],lastEqRow:1,editEq:null,insumos:[],lastInsRow:1,editIns:null,invSec:"mat"};
+  lastRow:1,lastItemRow:1,paths:{},tab:"dash",labelLote:null,draft:null,editCode:null,unlocked:false,deleted:0,fileLotes:new Set(),equipos:[],lastEqRow:1,editEq:null,insumos:[],lastInsRow:1,editIns:null,invSec:"mat",productos:[],prodDirty:false,prodDraft:null};
 
 /* ============ lectura del xlsx ============ */
 const parseXml=s=>new DOMParser().parseFromString(s,"application/xml");
@@ -412,12 +440,23 @@ async function loadBuffer(buf,name){
   if(paths.Insumos){const im=await readSheet(paths.Insumos);
     for(const [r,o] of im){if(r<2||!o.A)continue;S.lastInsRow=Math.max(S.lastInsRow,r);S.insumos.push({row:r,code:String(o.A).trim(),name:String(o.B||"").trim(),desc:o.C||"",cant:num(o.D)||0,precio:num(o.E)||0,dirty:null})}}
   S.editIns=null;
+  // Productos (catálogo): una fila por artículo
+  S.productos=[];S.prodDirty=false;S.prodDraft=null;
+  if(paths.Productos){const pm=await readSheet(paths.Productos),G=new Map(),rd=x=>+(+x).toFixed(6);
+    for(const [r,o] of pm){if(r<2||!o.A)continue;const c=String(o.A).trim();
+      if(!G.has(c))G.set(c,{p:{kind:"cat",code:c,name:String(o.B||"").trim(),mode:/person/i.test(o.C||"")?"custom":"std",qty:1,pv:num(o.D)||0,arts:[]},A:new Map()});
+      const g=G.get(c);if(!o.E&&!o.F)continue;
+      const k=o.O!=null?"a"+o.O:"r"+r;let a=g.A.get(k);
+      if(!a){const mn=num(o.J)||0;a={desc:String(o.E||""),perProd:num(o.G)??1,cols:[],h:Math.floor(mn/60),m:rd(mn%60)||"",insCode:String(o.K||"").trim(),insQ:num(o.L)??"",insumo:o.M||"",insC:num(o.N)||"",notas:""};g.A.set(k,a);g.p.arts.push(a)}
+      a.cols.push({item:String(o.F||"").trim(),pesoU:num(o.H)??"",purga:num(o.I)||0})}
+    S.productos=[...G.values()].map(g=>g.p)}
   // Registro
   S.rows=[];S.lastRow=1;
   for(const [r,o] of reg){if(r<2||!o.A)continue;S.lastRow=Math.max(S.lastRow,r);
     S.rows.push({row:r,src:"file",dirty:false,lote:String(o.A).trim(),fecha:typeof o.B==="number"?serialToISO(o.B):"",articulo:o.C||"",desc:o.D||"",
       cant:num(o.E)||0,item:String(o.F||"").trim(),pesoU:num(o.J),purga:num(o.K)||0,min:num(o.M)||0,estado:String(o.P||"").trim(),
-      pv:num(o.T)||0,destino:String(o.X||"").trim().toUpperCase(),notas:o.Y||"",insumo:String(o.Z||"").trim(),insumoCosto:num(o.AA)||0,equipo:String(o.AB||"").trim(),estLote:normSt(o.AC),insCode:String(o.AD||"").trim(),insQty:num(o.AE)||0})}
+      pv:num(o.T)||0,destino:String(o.X||"").trim().toUpperCase(),notas:o.Y||"",insumo:String(o.Z||"").trim(),insumoCosto:num(o.AA)||0,equipo:String(o.AB||"").trim(),estLote:normSt(o.AC),insCode:String(o.AD||"").trim(),insQty:num(o.AE)||0,
+      producto:String(o.AF||"").trim(),prodCode:String(o.AG||"").trim(),prodQty:num(o.AH)||0,perProd:num(o.AI),variante:String(o.AJ||"").trim(),prodPrice:num(o.AK)||0,pidx:num(o.AL)||0,aidx:num(o.AM)||0,cidx:num(o.AN)||0})}
   S.buf=buf;S.fileName=name||S.fileName;S.paths=paths;
   S.rows.forEach(derive);
   S.fileLotes=new Set(S.rows.map(r=>r.lote));S.deleted=0;
@@ -454,7 +493,7 @@ function letterOf(rs){
   if(est.some(e=>/terminado/i.test(e)))return "A";
   return "?";
 }
-function pendingCount(){return S.rows.filter(r=>r.dirty).length+S.deleted+S.equipos.filter(e=>e.dirty).length+S.items.filter(i=>i.dirty).length+S.insumos.filter(i=>i.dirty).length+(S.tariffDirty?1:0)}
+function pendingCount(){return S.rows.filter(r=>r.dirty).length+S.deleted+S.equipos.filter(e=>e.dirty).length+S.items.filter(i=>i.dirty).length+S.insumos.filter(i=>i.dirty).length+(S.tariffDirty?1:0)+(S.prodDirty?1:0)}
 
 /* ============ guardado: edición directa del XML ============ */
 function mk(doc,n){return doc.createElementNS(NS,n)}
@@ -529,13 +568,14 @@ async function buildXlsx(){
     put("V",{f:F.V,cached:(r.pv||0)-(r.pesoU||0)*r.precioKg/1000});put("W",{f:F.W,cached:r.neta});
     put("X",{str:r.destino});put("Y",{str:r.notas||""});
     putCell(doc,el,"Z",{s:own.Z??styles.Y,str:r.insumo});if(r.insumoCosto>0)putCell(doc,el,"AA",{s:own.AA??styles.T,num:r.insumoCosto});putCell(doc,el,"AB",{s:own.AB??styles.Y,str:r.eq});putCell(doc,el,"AC",{s:own.AC??styles.Y,str:r.estLote||"Finalizado"});if(r.insCode){putCell(doc,el,"AD",{s:own.AD??styles.Y,str:r.insCode});putCell(doc,el,"AE",{s:own.AE??styles.T,num:r.insQty||0})}
+    if(r.producto){const ps=k=>own[k]??styles.Y,pn=k=>own[k]??styles.T;putCell(doc,el,"AF",{s:ps("AF"),str:r.producto});if(r.prodCode)putCell(doc,el,"AG",{s:ps("AG"),str:r.prodCode});putCell(doc,el,"AH",{s:pn("AH"),num:r.prodQty||0});putCell(doc,el,"AI",{s:pn("AI"),num:r.perProd||0});putCell(doc,el,"AJ",{s:ps("AJ"),str:r.variante||""});putCell(doc,el,"AK",{s:pn("AK"),num:r.prodPrice||0});putCell(doc,el,"AL",{s:pn("AL"),num:r.pidx||0});putCell(doc,el,"AM",{s:pn("AM"),num:r.aidx||0});putCell(doc,el,"AN",{s:pn("AN"),num:r.cidx||0})}
   }
   // filas que quedaron sobrantes por eliminar lotes: se vacían (se conserva el formato)
   for(const [rn,el] of idx.m){if(rn>n&&rn<=S.lastRow){for(const c of [...el.children]){while(c.firstChild)c.removeChild(c.firstChild);c.removeAttribute("t")}}}
   // encabezados de las columnas nuevas y ancho
   const h1=idx.m.get(1);
   if(h1){h1.removeAttribute("spans");const hs=[...h1.children].find(c=>colOf(c.getAttribute("r"))==="Y")?.getAttribute("s");
-    putCell(doc,h1,"Z",{s:hs,str:"Descripción de insumo"});putCell(doc,h1,"AA",{s:hs,str:"Costo de insumo ($)"});putCell(doc,h1,"AB",{s:hs,str:"Equipo"});putCell(doc,h1,"AC",{s:hs,str:"Estado del lote"});putCell(doc,h1,"AD",{s:hs,str:"Código de insumo"});putCell(doc,h1,"AE",{s:hs,str:"Cantidad de insumo"})}
+    putCell(doc,h1,"Z",{s:hs,str:"Descripción de insumo"});putCell(doc,h1,"AA",{s:hs,str:"Costo de insumo ($)"});putCell(doc,h1,"AB",{s:hs,str:"Equipo"});putCell(doc,h1,"AC",{s:hs,str:"Estado del lote"});putCell(doc,h1,"AD",{s:hs,str:"Código de insumo"});putCell(doc,h1,"AE",{s:hs,str:"Cantidad de insumo"});[["AF","Producto"],["AG","Código de producto"],["AH","Cantidad de productos"],["AI","Cantidad por producto"],["AJ","Variación"],["AK","Precio por producto ($)"],["AL","N° de producto en el lote"],["AM","N° de artículo"],["AN","N° de color"]].forEach(([c,t])=>putCell(doc,h1,c,{s:hs,str:t}))}
   // lista desplegable de equipos en la columna AB (toma los nombres de la hoja Equipos)
   if(![...doc.getElementsByTagName("dataValidation")].some(v=>(v.getAttribute("sqref")||"").startsWith("AB2"))){
     const dv=mk(doc,"dataValidation");dv.setAttribute("type","list");dv.setAttribute("allowBlank","1");dv.setAttribute("sqref","AB2:AB467");
@@ -549,7 +589,7 @@ async function buildXlsx(){
     const f2=mk(doc,"formula1");f2.textContent='"'+ESTLOTE.join(",")+'"';dv2.appendChild(f2);
     const dvs2=doc.getElementsByTagName("dataValidations")[0];dvs2.appendChild(dv2);dvs2.setAttribute("count",String(dvs2.children.length))}
   const cl=doc.getElementsByTagName("cols")[0];
-  if(cl)for(const [mn,w] of [[26,30],[27,18],[28,18],[29,18],[30,18],[31,18]]){if([...cl.children].every(c=>+c.getAttribute("max")<mn)){const c=mk(doc,"col");c.setAttribute("min",String(mn));c.setAttribute("max",String(mn));c.setAttribute("width",String(w));c.setAttribute("customWidth","1");cl.appendChild(c)}}
+  if(cl)for(const [mn,w] of [[26,30],[27,18],[28,18],[29,18],[30,18],[31,18],[32,26],[33,18],[34,18],[35,18],[36,16],[37,20],[38,18],[39,14],[40,14]]){if([...cl.children].every(c=>+c.getAttribute("max")<mn)){const c=mk(doc,"col");c.setAttribute("min",String(mn));c.setAttribute("max",String(mn));c.setAttribute("width",String(w));c.setAttribute("customWidth","1");cl.appendChild(c)}}
   const last=Math.max(n,2);
   zip.file(S.paths.Registro,ser(doc));
   /* --- tabla, tabla dinámica, cálculo --- */
@@ -582,20 +622,7 @@ async function buildXlsx(){
       const dim=d.getElementsByTagName("dimension")[0];if(dim&&/^A1:[A-Z]+\d+$/.test(dim.getAttribute("ref")||"")){const m=/^A1:([A-Z]+)/.exec(dim.getAttribute("ref"));dim.setAttribute("ref",`A1:${colNum(m[1])<4?"D":m[1]}${Math.max(nr,S.lastEqRow)}`)}
       zip.file(S.paths.Equipos,ser(d));
     }else{
-      const X=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-      const cx=(ref,v,s)=>v===""||v==null?"":`<c r="${ref}" t="inlineStr" s="${s}"><is><t xml:space="preserve">${X(v)}</t></is></c>`;
-      let rx=`<row r="1">${["Nombre","Descripción","Marca","Modelo"].map((h,i)=>cx("ABCD"[i]+"1",h,10)).join("")}</row>`;
-      S.equipos.forEach((e,i)=>{const rn=i+2;rx+=`<row r="${rn}">`+[e.name,e.desc,e.marca,e.modelo].map((v,k)=>cx("ABCD"[k]+rn,v,2)).join("")+"</row>"});
-      const xml=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<worksheet xmlns="${NS}"><dimension ref="A1:D${S.equipos.length+1}"/><sheetViews><sheetView workbookViewId="0"/></sheetViews><sheetFormatPr defaultRowHeight="15"/><cols><col min="1" max="1" width="24" customWidth="1"/><col min="2" max="2" width="34" customWidth="1"/><col min="3" max="3" width="18" customWidth="1"/><col min="4" max="4" width="14" customWidth="1"/></cols><sheetData>${rx}</sheetData></worksheet>`;
-      let k=1;while(zip.file(`xl/worksheets/sheet${k}.xml`))k++;const p=`xl/worksheets/sheet${k}.xml`;
-      let wbx=await zip.file("xl/workbook.xml").async("string");if(!wbx.includes("</sheets>"))throw new Error("No pude añadir la hoja Equipos al libro.");
-      let rl=await zip.file("xl/_rels/workbook.xml.rels").async("string"),ct=await zip.file("[Content_Types].xml").async("string");
-      const sid=Math.max(0,...[...wbx.matchAll(/sheetId="(\d+)"/g)].map(m=>+m[1]))+1;
-      const rid="rId"+(Math.max(0,...[...rl.matchAll(/Id="rId(\d+)"/g)].map(m=>+m[1]))+1);
-      zip.file(p,xml);
-      zip.file("xl/workbook.xml",wbx.replace("</sheets>",`<sheet xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" name="Equipos" sheetId="${sid}" r:id="${rid}"/></sheets>`));
-      zip.file("xl/_rels/workbook.xml.rels",rl.replace("</Relationships>",`<Relationship Id="${rid}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${k}.xml"/></Relationships>`));
-      zip.file("[Content_Types].xml",ct.replace("</Types>",`<Override PartName="/${p}" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>`));
+      await addSheet(zip,"Equipos",[24,34,18,14],["Nombre","Descripción","Marca","Modelo"],S.equipos.map(e=>[[e.name,2],[e.desc,2],[e.marca,2],[e.modelo,2]]));
     }
   }
   /* --- Insumos --- */
@@ -609,22 +636,18 @@ async function buildXlsx(){
       const dim=d.getElementsByTagName("dimension")[0];if(dim)dim.setAttribute("ref",`A1:E${Math.max(nr,S.lastInsRow,2)}`);
       zip.file(S.paths.Insumos,ser(d));
     }else{
-      const X=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-      const cs=(ref,v,st)=>v===""||v==null?"":`<c r="${ref}" t="inlineStr" s="${st}"><is><t xml:space="preserve">${X(v)}</t></is></c>`;
-      const cn=(ref,v,st)=>`<c r="${ref}" s="${st}"><v>${v}</v></c>`;
-      let rx=`<row r="1">${["Código","Nombre","Descripción","Cantidad","Precio por unidad ($)"].map((h,i)=>cs("ABCDE"[i]+"1",h,10)).join("")}</row>`;
-      S.insumos.forEach((e,k)=>{const rn=k+2;rx+=`<row r="${rn}">${cs("A"+rn,e.code,2)}${cs("B"+rn,e.name,2)}${cs("C"+rn,e.desc,2)}${cn("D"+rn,e.cant,2)}${cn("E"+rn,e.precio,30)}</row>`});
-      const xml=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<worksheet xmlns="${NS}"><dimension ref="A1:E${S.insumos.length+1}"/><sheetViews><sheetView workbookViewId="0"/></sheetViews><sheetFormatPr defaultRowHeight="15"/><cols><col min="1" max="1" width="14" customWidth="1"/><col min="2" max="2" width="26" customWidth="1"/><col min="3" max="3" width="34" customWidth="1"/><col min="4" max="4" width="12" customWidth="1"/><col min="5" max="5" width="22" customWidth="1"/></cols><sheetData>${rx}</sheetData></worksheet>`;
-      let k=1;while(zip.file(`xl/worksheets/sheet${k}.xml`))k++;const pth=`xl/worksheets/sheet${k}.xml`;
-      let wbx=await zip.file("xl/workbook.xml").async("string");if(!wbx.includes("</sheets>"))throw new Error("No pude añadir la hoja Insumos al libro.");
-      let rl=await zip.file("xl/_rels/workbook.xml.rels").async("string"),ct=await zip.file("[Content_Types].xml").async("string");
-      const sid=Math.max(0,...[...wbx.matchAll(/sheetId="(\d+)"/g)].map(m=>+m[1]))+1;
-      const rid="rId"+(Math.max(0,...[...rl.matchAll(/Id="rId(\d+)"/g)].map(m=>+m[1]))+1);
-      zip.file(pth,xml);
-      zip.file("xl/workbook.xml",wbx.replace("</sheets>",`<sheet xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" name="Insumos" sheetId="${sid}" r:id="${rid}"/></sheets>`));
-      zip.file("xl/_rels/workbook.xml.rels",rl.replace("</Relationships>",`<Relationship Id="${rid}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${k}.xml"/></Relationships>`));
-      zip.file("[Content_Types].xml",ct.replace("</Types>",`<Override PartName="/${pth}" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>`));
+      await addSheet(zip,"Insumos",[14,26,34,12,22],["Código","Nombre","Descripción","Cantidad","Precio por unidad ($)"],S.insumos.map(i=>[[i.code,2],[i.name,2],[i.desc,2],[i.cant,2],[i.precio,30]]));
     }
+  }
+  /* --- Productos (catálogo): se reescribe completa cuando cambia --- */
+  if(S.prodDirty){
+    const hdr=["Código","Producto","Tipo","Precio por producto ($)","Artículo","Material","Cantidad por producto","Peso por unidad (g)","Purga por producto (g)","Tiempo por producto (min)","Insumo (código)","Insumo: cantidad por producto","Insumo manual","Insumo manual: costo por producto ($)","N° de artículo"];
+    const cols=[12,28,16,20,26,12,16,16,16,18,14,18,22,22,14],rows=[];
+    for(const c of S.productos){const base=[[c.code,2],[c.name,2],[c.mode==="std"?"Estándar":"Personalizable",2],[num(c.pv)||0,30]];
+      if(!c.arts.length)rows.push([...base,...Array(11).fill(["",2])]);
+      c.arts.forEach((a,ai)=>a.cols.forEach((k,ci)=>{const f=ci===0;
+        rows.push([...base,[a.desc,2],[k.item,2],[f?(num(a.perProd)||0):"",2],[num(k.pesoU)||0,2],[num(k.purga)||0,2],[f?(num(a.h)||0)*60+(num(a.m)||0):"",2],[f?a.insCode||"":"",2],[f&&a.insCode?(num(a.insQ)||0):"",2],[f?a.insumo||"":"",2],[f&&!a.insCode?(num(a.insC)||0):"",2],[ai+1,2]])}))}
+    if(S.paths.Productos)zip.file(S.paths.Productos,sheetXml(cols,hdr,rows));else await addSheet(zip,"Productos",cols,hdr,rows);
   }
   /* --- Items --- */
   const needItems=S.items.some(i=>i.dirty)||S.tariffDirty||true; // siempre: garantiza columna I y tarifa J2 usadas por las fórmulas nuevas
@@ -745,10 +768,10 @@ function renderAll(){
   const loaded=!!S.buf;
   document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tab===S.tab)));
   $("#view-empty").classList.toggle("hidden",loaded);
-  for(const v of ["dash","ana","reg","quote","label","mat","eq"])$("#view-"+v).classList.toggle("hidden",!loaded||S.tab!==v);
+  for(const v of ["dash","ana","reg","quote","prod","label","mat","eq"])$("#view-"+v).classList.toggle("hidden",!loaded||S.tab!==v);
   renderFilebar();
   if(!loaded)return;
-  ({dash:renderDash,ana:renderAna,reg:renderReg,quote:renderQuote,label:renderLabel,mat:renderMat,eq:renderEq})[S.tab]();labelize();
+  ({dash:renderDash,ana:renderAna,reg:renderReg,quote:renderQuote,prod:renderProd,label:renderLabel,mat:renderMat,eq:renderEq})[S.tab]();labelize();
 }
 function labelize(){document.querySelectorAll(".tbl").forEach(tb=>{const h=[...tb.querySelectorAll("thead th")].map(x=>x.textContent.trim());
   tb.querySelectorAll("tbody tr").forEach(tr=>[...tr.children].forEach((td,i)=>td.setAttribute("data-label",h[i]||"")))})}
@@ -829,63 +852,167 @@ function renderDash(){
 }
 
 /* ---- Registrar ---- */
+/* ---- Productos: modelo compartido por Catálogo, Registrar y Cotizar ---- */
+const firstMat=()=>S.items.find(i=>i.peso)?.code||"";
+const blankCol=()=>({item:firstMat(),pesoU:"",purga:0});
+const blankArt=()=>({desc:"",perProd:1,cols:[blankCol()],h:0,m:"",insCode:"",insQ:"",insumo:"",insC:"",notas:""});
+const cloneP=p=>JSON.parse(JSON.stringify(p));
+const prodFromCat=c=>({...cloneP(c),kind:"cat",qty:1});
+const prodFree=(name="")=>({kind:"free",code:"",name,mode:"custom",qty:1,pv:"",arts:[blankArt()]});
+const variantOf=p=>p.mode==="std"?"Estándar":p.kind==="free"?"Sin catálogo":"Personalizado";
+const instKey=r=>r.lote+"#"+(r.producto?"P"+(r.pidx||0):"L"+r.row);
+/* Cálculo de un artículo para `qty` productos. Cantidad, tiempo, purga e insumo son POR PRODUCTO.
+   El tiempo total del artículo se reparte entre sus colores según el peso de cada uno. */
+function artCalc(a,qty){
+  const n=(num(a.perProd)||0)*qty,tot=((num(a.h)||0)*60+(num(a.m)||0))*qty,gsum=a.cols.reduce((s,c)=>s+(num(c.pesoU)||0),0);
+  const cols=a.cols.map(c=>{const it=S.itemMap[c.item];
+    if(!(n>0))return{item:c.item,it,pesoTot:0,min:0,costMat:0,elec:0,share:0};
+    const g=num(c.pesoU)||0,share=gsum>0?g/gsum:1/a.cols.length,pesoTot=g*n+(num(c.purga)||0)*qty,min=tot*share;
+    return{item:c.item,it,pesoTot,min,costMat:pesoTot*(it?.precio||0)/1000,elec:(it?.kw||0)*min/60*S.tariff,share}});
+  const sum=k=>cols.reduce((s,c)=>s+c[k],0);
+  const ii=a.insCode?insByCode(a.insCode):null,insQ=n>0&&ii?(num(a.insQ)||0)*qty:0,ins=n>0?(ii?insQ*ii.precio:(num(a.insC)||0)*qty):0;
+  return{n:n>0?n:0,cols,pesoTot:sum("pesoTot"),min:sum("min"),costMat:sum("costMat"),elec:sum("elec"),ins,insQ,cost:sum("costMat")+sum("elec")+ins};
+}
+function prodCalc(p){
+  const qty=num(p.qty)||0,C=p.arts.map(a=>artCalc(a,qty)),sum=k=>C.reduce((s,c)=>s+(c[k]||0),0);
+  const cost=sum("cost"),venta=(num(p.pv)||0)*qty;
+  return{qty,C,pesoTot:sum("pesoTot"),min:sum("min"),costMat:sum("costMat"),elec:sum("elec"),ins:sum("ins"),cost,venta,neta:venta-cost};
+}
+const matOpts=cur=>S.items.filter(i=>i.peso||i.code===cur).map(i=>`<option value="${esc(i.code)}" ${i.code===cur?"selected":""}>${esc(i.code)} · ${esc(i.color)} ${esc(i.tipo)}</option>`).join("");
+function artEditor(a,i,locked,canDel){
+  const d=locked?" disabled":"";
+  const ins=S.insumos.map(x=>`<option value="${esc(x.code)}" ${x.code===a.insCode?"selected":""}>${esc(x.code)} · ${esc(x.name)} (quedan ${nf(insLeft(x.code),0)})</option>`).join("");
+  const cols=a.cols.map((c,k)=>`<div class="colr" data-ci="${k}"><div class="row r4"><div><label class="f">Color ${k+1}: material</label><select class="in" data-ck="item"${d}>${matOpts(c.item)}</select></div>
+      <div><label class="f">Peso por unidad (g)</label><input class="in" type="number" min="0" step="0.01" data-ck="pesoU" value="${esc(c.pesoU)}"${d}></div>
+      <div><label class="f">Purga por producto (g)</label><input class="in" type="number" min="0" step="0.01" data-ck="purga" value="${esc(c.purga)}"${d}></div>
+      <div style="align-self:end">${a.cols.length>1&&!locked?`<button class="btn small ghost" data-act="delCol">Quitar color</button>`:""}</div></div></div>`).join("");
+  return `<div class="art" data-ai="${i}">
+    <div class="art-h"><h3>Artículo ${i+1}</h3>${canDel&&!locked?`<button class="btn small ghost" data-act="delArt">Quitar</button>`:""}</div>
+    <div class="row r2"><div><label class="f">Descripción</label><input class="in" data-k="desc" value="${esc(a.desc)}" placeholder="Ej. Contenedor"${d}></div>
+      <div><label class="f">Cantidad por producto</label><input class="in" type="number" min="0" step="1" data-k="perProd" value="${esc(a.perProd)}" placeholder="0 = no incluir"${d}></div></div>
+    ${cols}${locked?"":`<div class="actions" style="margin:0 0 10px"><button class="btn small" data-act="addCol">+ Añadir color</button></div>`}
+    <div class="row r3"><div><label class="f">Tiempo del artículo por producto: horas</label><input class="in" type="number" min="0" step="1" data-k="h" value="${esc(a.h)}"${d}></div>
+      <div><label class="f">Tiempo del artículo por producto: minutos</label><input class="in" type="number" min="0" step="1" data-k="m" value="${esc(a.m)}"${d}></div>
+      <div><label class="f">Notas</label><input class="in" data-k="notas" value="${esc(a.notas)}" placeholder="Ajustes…"${d}></div></div>
+    ${a.cols.length>1?`<p class="hint" style="margin:-4px 0 10px">El tiempo es el del artículo completo; yo lo reparto entre los colores según su peso.</p>`:""}
+    <div class="row r3"><div><label class="f">Insumo del inventario</label><select class="in" data-k="insCode"${d}><option value="">Ninguno / otro (manual)</option>${ins}</select></div>
+      ${a.insCode?`<div><label class="f">Cantidad por producto</label><input class="in" type="number" min="0" step="1" data-k="insQ" value="${esc(a.insQ)}"${d}></div><div><label class="f">Costo por producto</label><input class="in" value="${money((num(a.insQ)||0)*(insByCode(a.insCode)?.precio||0))}" disabled></div>`
+      :`<div><label class="f">Descripción del insumo extra</label><input class="in" data-k="insumo" value="${esc(a.insumo)}" placeholder="Ej. Aro metálico (vacío = N/A)"${d}></div><div><label class="f">Costo por producto ($)</label><input class="in" type="number" min="0" step="0.01" data-k="insC" value="${esc(a.insC)}"${d}></div>`}</div>
+    <div class="prev" data-prev></div></div>`;
+}
+const prodBody=(p,locked)=>p.arts.map((a,i)=>artEditor(a,i,locked,p.arts.length>1)).join("")+(locked?"":`<div class="actions" style="margin:0 0 6px"><button class="btn small" data-act="addArt">+ Añadir artículo</button></div>`);
+function prodEditor(p,pi,priceLabel){
+  const locked=p.mode==="std";
+  const nm=p.kind==="free"?`<div><label class="f">Nombre del producto</label><input class="in" data-pk="name" value="${esc(p.name)}" placeholder="Ej. Producto Enigma"></div>`
+    :`<div><label class="f">Producto</label><div class="pname"><b>${esc(p.name)}</b> <span class="tag">${locked?"estándar":"personalizable"}</span></div></div>`;
+  return `<div class="prod" data-pi="${pi}"><div class="prod-h"><h3>Producto ${pi+1}${p.code?` · ${esc(p.code)}`:""}</h3><div class="actions" style="margin:0">${locked?`<button class="btn small ghost" data-act="custom">Personalizar este producto</button>`:""}<button class="btn small ghost" data-act="delProd">Quitar producto</button></div></div>
+    <div class="row r3">${nm}<div><label class="f">Cantidad de productos</label><input class="in" type="number" min="0" step="1" data-pk="qty" value="${esc(p.qty)}"></div>
+      <div><label class="f">${priceLabel}</label><input class="in" type="number" min="0" step="0.01" data-pk="pv" value="${esc(p.pv)}"${locked?" disabled":""}></div></div>
+    ${prodBody(p,locked)}<div class="prev prev-p" data-pprev></div></div>`;
+}
+function updatePrevs(root,list){
+  root.querySelectorAll(".prod").forEach(pe=>{const p=list[+pe.dataset.pi];if(!p)return;const P=prodCalc(p);
+    pe.querySelectorAll(".art").forEach(el=>{const c=P.C[+el.dataset.ai];if(!c)return;
+      const split=c.cols.length>1?c.cols.map(k=>`<span>${esc(k.it?.color||k.item)} <b>${nf(k.pesoTot,1)} g · ${hm(k.min)}</b></span>`).join(""):"";
+      el.querySelector("[data-prev]").innerHTML=c.n?`<span>Piezas <b>${nf(c.n,0)}</b></span>${split}<span>Peso total <b>${nf(c.pesoTot,1)} g</b></span><span>Tiempo <b>${hm(c.min)}</b></span><span>Material <b>${money(c.costMat)}</b></span><span>Luz <b>${money(c.elec)}</b></span><span>Insumo <b>${money(c.ins)}</b></span>`:`<span>No se incluye (cantidad 0)</span>`});
+    pe.querySelector("[data-pprev]").innerHTML=`<span>Total del producto ×${nf(P.qty,0)}:</span><span>peso <b>${nf(P.pesoTot,1)} g</b></span><span>tiempo <b>${hm(P.min)}</b></span><span>costo <b>${money(P.cost)}</b></span><span>venta <b>${money(P.venta)}</b></span><span>neta <b class="${P.neta>=0?"pos":"neg"}">${money(P.neta)}</b></span>`});
+}
+function bindProds(view,getList,rerender,update){
+  view.addEventListener("input",e=>{const t=e.target,pe=t.closest(".prod");if(!pe)return;const p=getList()[+pe.dataset.pi];if(!p)return;
+    if(t.dataset.pk)p[t.dataset.pk]=t.value;
+    else if(t.dataset.ck)p.arts[+t.closest(".art").dataset.ai].cols[+t.closest(".colr").dataset.ci][t.dataset.ck]=t.value;
+    else if(t.dataset.k){p.arts[+t.closest(".art").dataset.ai][t.dataset.k]=t.value;if(t.dataset.k==="insCode"){rerender();return}}
+    else return;
+    update()});
+  view.addEventListener("click",e=>{const b=e.target.closest("button[data-act]"),pe=b?.closest(".prod");if(!pe)return;const L=getList(),pi=+pe.dataset.pi,p=L[pi],act=b.dataset.act,a=b.closest(".art")?p.arts[+b.closest(".art").dataset.ai]:null;
+    if(act==="addArt")p.arts.push(blankArt());else if(act==="delArt")p.arts.splice(+b.closest(".art").dataset.ai,1);
+    else if(act==="addCol")a.cols.push(blankCol());else if(act==="delCol")a.cols.splice(+b.closest(".colr").dataset.ci,1);
+    else if(act==="delProd")L.splice(pi,1);else if(act==="custom")p.mode="custom";else return;
+    rerender()});
+}
+const addBar=(id,enigma)=>`<div class="row r2"><div><label class="f">Añadir producto</label><select class="in" id="${id}"><option value="">Elige un producto…</option>${S.productos.map(c=>`<option value="${esc(c.code)}">${esc(c.name)} · ${c.mode==="std"?"estándar":"personalizable"}</option>`).join("")}<option value="__free">Otro producto (sin catálogo)</option>${enigma?'<option value="__enigma">Producto Enigma (algo no registrado)</option>':""}</select></div><div></div></div>`;
+function pickProd(v,list){
+  if(v==="__free")list.push(prodFree());else if(v==="__enigma")list.push(prodFree("Producto Enigma"));
+  else{const c=S.productos.find(x=>x.code===v);if(!c)return false;list.push(prodFromCat(c))}
+  return true;
+}
+function checkProds(prods){
+  if(!prods.length)return "Añade al menos un producto.";
+  for(const [i,p] of prods.entries()){const t=`Producto ${i+1}`;
+    if(!p.name.trim())return `${t}: falta el nombre.`;
+    if(!(num(p.qty)>0))return `${t}: la cantidad debe ser mayor que 0.`;
+    const act=p.arts.filter(a=>(num(a.perProd)||0)>0);
+    if(!act.length)return `${t}: necesita al menos un artículo con cantidad mayor que 0.`;
+    for(const a of act){const u=`${t}, artículo ${p.arts.indexOf(a)+1}`;
+      if(!a.desc.trim())return `${u}: falta la descripción.`;
+      for(const [k,c] of a.cols.entries()){if(!c.item)return `${u}, color ${k+1}: elige un material.`;if(!(num(c.pesoU)>0))return `${u}, color ${k+1}: falta el peso por unidad.`}
+      if(!(((num(a.h)||0)*60+(num(a.m)||0))>0))return `${u}: falta el tiempo de impresión.`;
+      if(a.insCode&&!(num(a.insQ)>0))return `${u}: indica la cantidad de insumo por producto.`}}
+  return "";
+}
+/* Un producto del lote → filas del Registro: una por color de cada artículo. El precio del producto se reparte según el peso. */
+function prodRows(prods,m,off){
+  const out=[];
+  prods.forEach((p,pi)=>{const P=prodCalc(p),qty=P.qty;
+    const act=p.arts.map((a,i)=>({a,c:P.C[i],ai:i})).filter(x=>x.c.n>0),w=act.reduce((s,x)=>s+x.c.pesoTot,0);
+    act.forEach(({a,c,ai},k)=>{c.cols.forEach((cc,ci)=>{const col=a.cols[ci],first=ci===0;
+      const share=w>0?cc.pesoTot/w:(k===0&&first?1:0);
+      const r={row:0,src:m.src,dirty:true,lote:m.id,fecha:m.fecha,articulo:m.articulo,desc:a.desc.trim(),cant:c.n,item:col.item,pesoU:num(col.pesoU),purga:(num(col.purga)||0)*qty,min:cc.min,
+        estado:m.estado,pv:P.venta*share/c.n,destino:m.destino,equipo:m.equipo,estLote:m.estLote,notas:first?(a.notas||"").trim():"",
+        ...(first?insFields({...a,insQ:(num(a.insQ)||0)*qty,insC:(num(a.insC)||0)*qty}):{insumo:"",insumoCosto:0,insCode:"",insQty:0}),
+        producto:p.name.trim(),prodCode:p.code||"",prodQty:qty,perProd:num(a.perProd)||0,variante:variantOf(p),prodPrice:num(p.pv)||0,pidx:off+pi+1,aidx:ai+1,cidx:ci+1};
+      derive(r);out.push(r)})})});
+  return out;
+}
+function prodsFromRows(rows){
+  const G=new Map();for(const r of rows){const k=instKey(r);if(!G.has(k))G.set(k,[]);G.get(k).push(r)}
+  const rd=x=>+(+x).toFixed(6);
+  const art=(rs,q)=>{const f=rs[0],mn=rd(rs.reduce((s,r)=>s+(r.min||0),0)/q);
+    return{desc:f.desc,perProd:f.perProd??rd(f.cant/q),cols:rs.map(r=>({item:r.item,pesoU:r.pesoU??"",purga:rd((r.purga||0)/q)})),h:Math.floor(mn/60),m:rd(mn%60)||"",
+      insCode:f.insCode||"",insQ:f.insCode?rd((f.insQty||0)/q):"",insumo:f.insumo||"",insC:f.insCode?"":(rd((f.insumoCosto||0)/q)||""),notas:f.notas||""}};
+  return [...G.values()].map(rs=>{const f=rs[0];
+    if(!f.producto){const a=art(rs.slice(0,1),1);a.perProd=f.cant;return{kind:"free",code:"",name:f.desc,mode:"custom",qty:1,pv:rd((f.pv||0)*f.cant),arts:[a]}}
+    const q=f.prodQty||1,A=new Map();rs.forEach((r,i)=>{const k=r.aidx?"a"+r.aidx:"r"+i;if(!A.has(k))A.set(k,[]);A.get(k).push(r)});
+    return{kind:f.prodCode?"cat":"free",code:f.prodCode,name:f.producto,mode:f.variante==="Estándar"?"std":"custom",qty:q,pv:f.prodPrice||0,
+      arts:[...A.values()].map(g=>art(g.sort((x,y)=>(x.cidx||0)-(y.cidx||0)),q))};
+  });
+}
 function nextLoteId(){
   let max=0,w=4;for(const r of S.rows){const m=/^A(\d+)$/i.exec(r.lote);if(m){max=Math.max(max,+m[1]);w=Math.max(w,m[1].length)}}
   return "A"+String(max+1).padStart(w,"0");
 }
-const blankArt=()=>({desc:"",cant:1,item:S.items.find(i=>i.peso)?.code||"",pesoU:"",purga:0,h:0,m:"",pv:0,notas:"",insumo:"",insC:"",insCode:"",insQ:""});
 const insByCode=c=>S.insumos.find(i=>i.code===c);
 function insUsage(){const u={};for(const r of S.rows)if(r.insCode)u[r.insCode]=(u[r.insCode]||0)+(r.insQty||0);return u}
 const insLeft=c=>{const i=insByCode(c);return i?i.cant-(insUsage()[c]||0):0};
 function insFields(a){const i=a.insCode?insByCode(a.insCode):null;
   if(i){const q=num(a.insQ)||0;return{insumo:i.name,insumoCosto:q*i.precio,insCode:i.code,insQty:q}}
   return{insumo:(a.insumo||"").trim(),insumoCosto:num(a.insC)||0,insCode:"",insQty:0}}
-function draft(){return S.draft??={sel:"new",articulo:"",fecha:todayISO(),estado:"Producto terminado",destino:"HOGAR",stLote:"Pendiente",editId:null,equipo:S.equipos[0]?.name||"",arts:[blankArt()]}}
-function artRow(a){
-  const it=S.itemMap[a.item];const pesoTot=(num(a.pesoU)||0)*(num(a.cant)||0)+(num(a.purga)||0);
-  const insI=a.insCode?insByCode(a.insCode):null;const ins=insI?(num(a.insQ)||0)*insI.precio:(num(a.insC)||0);const min=(num(a.h)||0)*60+(num(a.m)||0);const costMat=pesoTot*(it?.precio||0)/1000,elec=(it?.kw||0)*min/60*S.tariff,venta=(num(a.pv)||0)*(num(a.cant)||0);
-  return {pesoTot,min,costMat,elec,venta,ins,neta:venta-costMat-elec-ins,it};
-}
+function draft(){return S.draft??={sel:"new",articulo:"",fecha:todayISO(),estado:"Producto terminado",destino:"HOGAR",stLote:"Pendiente",editId:null,equipo:S.equipos[0]?.name||"",prods:[]}}
 function optList(list,val){const l=val&&!list.includes(val)?[...list,val]:list;return l.map(e=>`<option ${e===val?"selected":""}>${esc(e)}</option>`).join("")}
 function renderReg(){
   const d=draft(),ed=!!d.editId,existing=[...new Set(S.rows.map(r=>r.lote))];
-  const optsFor=cur=>S.items.filter(i=>i.peso||i.code===cur).map(i=>`<option value="${esc(i.code)}" ${i.code===cur?"selected":""}>${esc(i.code)} · ${esc(i.color)} ${esc(i.tipo)}</option>`).join("");
-  const artsHtml=d.arts.map((a,i)=>`<div class="art" data-i="${i}">
-    <div class="art-h"><h3>Artículo ${i+1}</h3>${d.arts.length>1?`<button class="btn small ghost" data-del="${i}">Quitar</button>`:""}</div>
-    <div class="row r2"><div><label class="f">Descripción</label><input class="in" data-k="desc" value="${esc(a.desc)}" placeholder="Ej. Porta vasos"></div>
-      <div><label class="f">Material</label><select class="in" data-k="item">${optsFor(a.item)}</select></div></div>
-    <div class="row r4"><div><label class="f">Cantidad</label><input class="in" type="number" min="1" step="1" data-k="cant" value="${esc(a.cant)}"></div>
-      <div><label class="f">Peso por unidad (g)</label><input class="in" type="number" min="0" step="0.01" data-k="pesoU" value="${esc(a.pesoU)}"></div>
-      <div><label class="f">Purga del lote (g)</label><input class="in" type="number" min="0" step="0.01" data-k="purga" value="${esc(a.purga)}"></div>
-      <div><label class="f">Precio de venta por unidad ($)</label><input class="in" type="number" min="0" step="0.01" data-k="pv" value="${esc(a.pv)}"></div></div>
-    <div class="row r3"><div><label class="f">Tiempo: horas</label><input class="in" type="number" min="0" step="1" data-k="h" value="${esc(a.h)}"></div>
-      <div><label class="f">Tiempo: minutos</label><input class="in" type="number" min="0" max="59" step="1" data-k="m" value="${esc(a.m)}"></div>
-      <div><label class="f">Notas</label><input class="in" data-k="notas" value="${esc(a.notas)}" placeholder="Para quién, ajustes…"></div></div>
-    <div class="row r3"><div><label class="f">Insumo del inventario</label><select class="in" data-k="insCode"><option value="">Ninguno / otro (manual)</option>${S.insumos.map(x=>`<option value="${esc(x.code)}" ${x.code===a.insCode?"selected":""}>${esc(x.code)} · ${esc(x.name)} (quedan ${nf(insLeft(x.code),0)})</option>`).join("")}</select></div>
-      ${a.insCode?`<div><label class="f">Cantidad usada (unidades)</label><input class="in" type="number" min="0" step="1" data-k="insQ" value="${esc(a.insQ)}"></div><div><label class="f">Costo del insumo</label><input class="in" value="${money((num(a.insQ)||0)*(insByCode(a.insCode)?.precio||0))}" disabled></div>`
-      :`<div><label class="f">Descripción del insumo extra</label><input class="in" data-k="insumo" value="${esc(a.insumo)}" placeholder="Ej. Aro metálico (vacío = N/A)"></div><div><label class="f">Costo del insumo ($, total del artículo)</label><input class="in" type="number" min="0" step="0.01" data-k="insC" value="${esc(a.insC)}"></div>`}</div>
-    <div class="prev" data-prev></div></div>`).join("");
-  const head=ed?`<div class="row r4"><div><label class="f">Nombre del artículo o lote</label><input class="in" id="d-articulo" value="${esc(d.articulo)}"></div>
+  const head=ed?`<div class="row r4"><div><label class="f">Nombre del lote o pedido</label><input class="in" id="d-articulo" value="${esc(d.articulo)}"></div>
       <div><label class="f">Fecha</label><input class="in" type="date" id="d-fecha" value="${esc(d.fecha)}"></div>
       <div><label class="f">Estado final</label><select class="in" id="d-estado">${optList(ESTADOS,d.estado)}</select></div>
       <div><label class="f">Destino</label><select class="in" id="d-destino">${optList(DESTINOS,d.destino)}</select></div></div>`
-    :`<div class="row r2"><div><label class="f">Lote</label><select class="in" id="d-sel"><option value="new">Lote nuevo: ${nextLoteId()}</option>${existing.map(l=>`<option value="${esc(l)}" ${d.sel===l?"selected":""}>Añadir artículo a ${esc(l)}</option>`).join("")}</select></div>
+    :`<div class="row r2"><div><label class="f">Lote</label><select class="in" id="d-sel"><option value="new">Lote nuevo: ${nextLoteId()}</option>${existing.map(l=>`<option value="${esc(l)}" ${d.sel===l?"selected":""}>Añadir productos a ${esc(l)}</option>`).join("")}</select></div>
       <div class="${d.sel==="new"?"":"hidden"}"><label class="f">Fecha</label><input class="in" type="date" id="d-fecha" value="${esc(d.fecha)}"></div></div>
-    <div class="row r3 ${d.sel==="new"?"":"hidden"}"><div><label class="f">Nombre del artículo o lote</label><input class="in" id="d-articulo" value="${esc(d.articulo)}" placeholder="Ej. Contenedor & porta vasos"></div>
+    <div class="row r3 ${d.sel==="new"?"":"hidden"}"><div><label class="f">Nombre del lote o pedido</label><input class="in" id="d-articulo" value="${esc(d.articulo)}" placeholder="Ej. Pedido de Ana"></div>
       <div><label class="f">Estado final</label><select class="in" id="d-estado">${optList(ESTADOS,d.estado)}</select></div>
       <div><label class="f">Destino</label><select class="in" id="d-destino">${optList(DESTINOS,d.destino)}</select></div></div>
-    ${d.sel!=="new"?`<p class="hint">El artículo nuevo hereda nombre, fecha, estado y destino de ${esc(d.sel)}.</p>`:""}`;
+    ${d.sel!=="new"?`<p class="hint">Los productos nuevos heredan nombre, fecha, estado y destino de ${esc(d.sel)}.</p>`:""}`;
   const eqRow=`<div class="row r4 ${(ed||d.sel==="new")?"":"hidden"}"><div><label class="f">Equipo</label><select class="in" id="d-equipo">${optList(S.equipos.map(e=>e.name),d.equipo)}</select></div>
     <div><label class="f">Estado del lote</label><select class="in stsel st-${STK[d.stLote]||"pen"}" id="d-stlote">${ESTLOTE.map(x=>`<option ${x===d.stLote?"selected":""}>${x}</option>`).join("")}</select></div></div>`;
-  const btns=ed?`<button class="btn primary" id="saveEdit">Guardar cambios del lote</button><button class="btn" id="addArt">+ Añadir artículo</button><button class="btn ghost" id="cancelEdit">Cancelar</button><button class="btn danger" id="delEdit" style="margin-left:auto">Eliminar lote</button>`
-    :`<button class="btn" id="addArt">+ Añadir artículo</button><button class="btn primary" id="addLote">Registrar ${d.sel==="new"?"lote":"artículo"}</button><button class="btn ghost" id="clearDraft">Limpiar</button>`;
+  const btns=ed?`<button class="btn primary" id="saveEdit">Guardar cambios del lote</button><button class="btn ghost" id="cancelEdit">Cancelar</button><button class="btn danger" id="delEdit" style="margin-left:auto">Eliminar lote</button>`
+    :`<button class="btn primary" id="addLote">Registrar ${d.sel==="new"?"lote":"productos"}</button><button class="btn ghost" id="clearDraft">Limpiar</button>`;
   $("#view-reg").innerHTML=`<div class="grid g2"><div class="panel">
     <div class="panel-h"><h2>${ed?"Editando lote "+esc(d.editId):"Registrar lote"}</h2>${ed?'<span class="tag">modo edición</span>':""}</div>
-    ${head}${eqRow}${artsHtml}
+    ${head}${eqRow}${d.prods.map((p,i)=>prodEditor(p,i,"Precio de venta por producto ($)")).join("")}
+    ${addBar("addProd")}${!S.productos.length&&!d.prods.length?'<p class="hint">Aún no tienes productos en el catálogo. Créalos en la pestaña Productos, o usa «Otro producto (sin catálogo)».</p>':""}
     <div class="actions">${btns}</div>
     <p class="hint" style="margin-top:12px">Los cambios quedan pendientes hasta que guardes el Excel. Lo que ves en el dashboard ya los incluye.</p></div>
     <div class="panel"><div class="panel-h"><h2>Pendientes de guardar</h2></div><div class="pending-list" id="pendList"></div></div></div>`;
-  renderPending();updatePrev();
+  renderPending();updatePrevs($("#view-reg"),d.prods);
 }
 function renderPending(){
   const L=lotes().filter(l=>l.pending);
@@ -894,19 +1021,13 @@ function renderPending(){
   if(h)h+=`<div class="actions" style="margin-top:12px"><button class="btn small" id="discardAll">Descartar todos los cambios</button></div>`;
   $("#pendList").innerHTML=h||`<p class="muted">Nada pendiente.</p>`;
 }
-function updatePrev(){
-  const d=draft();document.querySelectorAll("#view-reg .art").forEach(el=>{const a=d.arts[+el.dataset.i],c=artRow(a);
-    el.querySelector("[data-prev]").innerHTML=`<span>Peso total <b>${nf(c.pesoTot,1)} g</b></span><span>Tiempo <b>${hm(c.min)}</b></span><span>Material <b>${money(c.costMat)}</b></span><span>Luz <b>${money(c.elec)}</b></span><span>Insumo <b>${money(c.ins)}</b></span><span>Venta <b>${money(c.venta)}</b></span><span>Neta <b class="${c.neta>=0?"pos":"neg"}">${money(c.neta)}</b></span>`});
-}
+bindProds($("#view-reg"),()=>draft().prods,()=>renderReg(),()=>updatePrevs($("#view-reg"),draft().prods));
 $("#view-reg").addEventListener("input",e=>{const d=draft(),t=e.target;
   if(t.id==="d-articulo")d.articulo=t.value;else if(t.id==="d-fecha")d.fecha=t.value;else if(t.id==="d-estado")d.estado=t.value;else if(t.id==="d-destino")d.destino=t.value;else if(t.id==="d-equipo")d.equipo=t.value;else if(t.id==="d-stlote"){d.stLote=t.value;t.className="in stsel st-"+STK[t.value]}
-  else if(t.id==="d-sel"){d.sel=t.value;renderReg();return}
-  else if(t.dataset.k){const a=d.arts[+t.closest(".art").dataset.i];a[t.dataset.k]=t.value;if(t.dataset.k==="insCode"){renderReg();return}}
-  updatePrev()});
+  else if(t.id==="d-sel"){d.sel=t.value;renderReg()}});
+$("#view-reg").addEventListener("change",e=>{if(e.target.id==="addProd"&&pickProd(e.target.value,draft().prods))renderReg()});
 $("#view-reg").addEventListener("click",e=>{const d=draft(),b=e.target.closest("button");if(!b)return;
-  if(b.id==="addArt"){d.arts.push(blankArt());renderReg()}
-  else if(b.dataset.del!==undefined){d.arts.splice(+b.dataset.del,1);renderReg()}
-  else if(b.id==="clearDraft"){S.draft=null;renderReg()}
+  if(b.id==="clearDraft"){S.draft=null;renderReg()}
   else if(b.dataset.undo){S.rows=S.rows.filter(r=>!(r.dirty&&r.lote===b.dataset.undo));renderAll()}
   else if(b.id==="discardAll"){if(confirm("¿Descartar todos los cambios sin guardar?"))safeLoad(S.buf,S.fileName)}
   else if(b.id==="saveEdit")commitEdit()
@@ -914,31 +1035,25 @@ $("#view-reg").addEventListener("click",e=>{const d=draft(),b=e.target.closest("
   else if(b.id==="delEdit")deleteLote(d.editId)
   else if(b.id==="addLote")commitDraft()});
 function commitDraft(){
-  const d=draft(),isNew=d.sel==="new";const err=[];
-  if(isNew&&!d.articulo.trim())err.push("Escribe el nombre del artículo o lote.");
-  d.arts.forEach((a,i)=>{if(!a.desc.trim())err.push(`Artículo ${i+1}: falta la descripción.`);if(!(num(a.cant)>0))err.push(`Artículo ${i+1}: la cantidad debe ser mayor que 0.`);
-    if(!a.item)err.push(`Artículo ${i+1}: elige un material.`);if(!(num(a.pesoU)>0))err.push(`Artículo ${i+1}: falta el peso por unidad.`);if(!(artRow(a).min>0))err.push(`Artículo ${i+1}: falta el tiempo de impresión.`);if(a.insCode&&!(num(a.insQ)>0))err.push(`Artículo ${i+1}: indica la cantidad de insumo usada.`)});
-  if(err.length)return toast(err[0],5000);
-  const base=isNew?null:S.rows.find(r=>r.lote===d.sel);const id=isNew?nextLoteId():d.sel;
-  for(const a of d.arts){const r={row:0,src:"new",dirty:true,lote:id,fecha:isNew?d.fecha:base.fecha,articulo:isNew?d.articulo.trim():base.articulo,desc:a.desc.trim(),cant:num(a.cant),item:a.item,
-    pesoU:num(a.pesoU),purga:num(a.purga)||0,min:artRow(a).min,estado:isNew?d.estado:base.estado,pv:num(a.pv)||0,destino:isNew?d.destino:base.destino,equipo:isNew?d.equipo:(base.equipo||base.eq),estLote:isNew?d.stLote:base.estLote,notas:a.notas.trim(),...insFields(a)};derive(r);S.rows.push(r)}
+  const d=draft(),isNew=d.sel==="new";
+  if(isNew&&!d.articulo.trim())return toast("Escribe el nombre del lote o pedido.",5000);
+  const er=checkProds(d.prods);if(er)return toast(er,5000);
+  const base=isNew?null:S.rows.find(r=>r.lote===d.sel),id=isNew?nextLoteId():d.sel;
+  const m=isNew?{fecha:d.fecha,articulo:d.articulo.trim(),estado:d.estado,destino:d.destino,equipo:d.equipo,estLote:d.stLote}:{fecha:base.fecha,articulo:base.articulo,estado:base.estado,destino:base.destino,equipo:base.equipo||base.eq,estLote:base.estLote};
+  const off=new Set(S.rows.filter(r=>r.lote===id).map(instKey)).size;
+  S.rows.push(...prodRows(d.prods,{...m,id,src:"new"},off));
   S.draft=null;S.labelLote=id;toast(`${id} registrado. Guarda el Excel para escribirlo.`);renderAll();
 }
-
 function startEdit(id){requireUnlock(()=>{
   const rows=S.rows.filter(r=>r.lote===id);if(!rows.length)return;const f=rows[0];
-  S.draft={sel:"new",editId:id,articulo:f.articulo||f.desc,fecha:f.fecha||todayISO(),estado:f.estado||ESTADOS[0],destino:f.destino||DESTINOS[0],equipo:f.eq||S.equipos[0]?.name||"",stLote:f.estLote||"Finalizado",
-    arts:rows.map(r=>({desc:r.desc,cant:r.cant,item:r.item,pesoU:r.pesoU??"",purga:r.purga||0,h:Math.floor((r.min||0)/60),m:(r.min||0)%60||"",pv:r.pv||0,notas:r.notas||"",insumo:r.insumo||"",insC:r.insumoCosto||"",insCode:r.insCode||"",insQ:r.insQty||""}))};
+  S.draft={sel:"new",editId:id,articulo:f.articulo||f.desc,fecha:f.fecha||todayISO(),estado:f.estado||ESTADOS[0],destino:f.destino||DESTINOS[0],equipo:f.eq||S.equipos[0]?.name||"",stLote:f.estLote||"Finalizado",prods:prodsFromRows(rows)};
   setTab("reg");window.scrollTo(0,0)})}
 function commitEdit(){
-  const d=draft(),id=d.editId,err=[];
-  if(!d.articulo.trim())err.push("Escribe el nombre del artículo o lote.");
-  d.arts.forEach((a,i)=>{if(!a.desc.trim())err.push(`Artículo ${i+1}: falta la descripción.`);if(!(num(a.cant)>0))err.push(`Artículo ${i+1}: la cantidad debe ser mayor que 0.`);
-    if(!a.item)err.push(`Artículo ${i+1}: elige un material.`);if(!(num(a.pesoU)>0))err.push(`Artículo ${i+1}: falta el peso por unidad.`);if(!(artRow(a).min>0))err.push(`Artículo ${i+1}: falta el tiempo de impresión.`);if(a.insCode&&!(num(a.insQ)>0))err.push(`Artículo ${i+1}: indica la cantidad de insumo usada.`)});
-  if(err.length)return toast(err[0],5000);
+  const d=draft(),id=d.editId;
+  if(!d.articulo.trim())return toast("Escribe el nombre del lote o pedido.",5000);
+  const er=checkProds(d.prods);if(er)return toast(er,5000);
   const first=S.rows.findIndex(r=>r.lote===id);
-  const nr=d.arts.map(a=>{const r={row:0,src:"edit",dirty:true,lote:id,fecha:d.fecha||todayISO(),articulo:d.articulo.trim(),desc:a.desc.trim(),cant:num(a.cant),item:a.item,
-    pesoU:num(a.pesoU),purga:num(a.purga)||0,min:artRow(a).min,estado:d.estado,pv:num(a.pv)||0,destino:d.destino,equipo:d.equipo,estLote:d.stLote,notas:a.notas.trim(),...insFields(a)};derive(r);return r});
+  const nr=prodRows(d.prods,{id,src:"edit",fecha:d.fecha||todayISO(),articulo:d.articulo.trim(),estado:d.estado,destino:d.destino,equipo:d.equipo,estLote:d.stLote},0);
   S.rows=S.rows.filter(r=>r.lote!==id);S.rows.splice(Math.max(0,first),0,...nr);
   S.draft=null;S.labelLote=id;toast(`${id} actualizado. Guarda el Excel para escribirlo.`);setTab("dash");
 }
@@ -995,10 +1110,13 @@ function renderLabel(){
 
 /* ---- Análisis de flujo (g/min) ---- */
 function prodSection(){
+  const I=new Map();
+  for(const r of S.rows){if(r.destino!=="VENTA")continue;const k=instKey(r);
+    if(!I.has(k))I.set(k,{name:(r.producto||r.desc||r.articulo||"—").trim(),lote:r.lote,qty:r.producto?r.prodQty:r.cant,min:0,g:0,costo:0,venta:0,neta:0});
+    const o=I.get(k);o.min+=r.min||0;o.g+=r.pesoTot||0;o.costo+=r.costo||0;o.venta+=r.venta||0;o.neta+=r.neta||0}
   const P={};
-  for(const r of S.rows){if(r.destino!=="VENTA")continue;const name=(r.desc||r.articulo||"—").trim(),k=name.toLowerCase();
-    const o=P[k]??={name,l:new Set(),u:0,min:0,g:0,costo:0,venta:0,neta:0};
-    o.l.add(r.lote);o.u+=r.cant||0;o.min+=r.min||0;o.g+=r.pesoTot||0;o.costo+=r.costo||0;o.venta+=r.venta||0;o.neta+=r.neta||0}
+  for(const o of I.values()){const k=o.name.toLowerCase(),a=P[k]??={name:o.name,l:new Set(),u:0,min:0,g:0,costo:0,venta:0,neta:0};
+    a.l.add(o.lote);a.u+=o.qty||0;a.min+=o.min;a.g+=o.g;a.costo+=o.costo;a.venta+=o.venta;a.neta+=o.neta}
   const A=Object.values(P);
   if(!A.length)return `<div class="panel"><div class="panel-h"><h2>Productos en venta</h2></div><p class="muted" style="margin:0">Aún no hay artículos con destino VENTA.</p></div>`;
   A.forEach(o=>{o.h=o.min/60;o.perH=o.h>0?o.neta/o.h:0;o.margen=o.venta?o.neta/o.venta*100:0});
@@ -1072,90 +1190,73 @@ function renderAna(){
    ${prodSection()}<div class="grid g2e">${grp(r=>r.tipo?`${r.tipo}${r.color?" · "+r.color:""}`:r.item,"Por material","Material")}${grp(r=>r.eq,"Por equipo","Equipo")}</div>`;
 }
 
-/* ---- Cotizar ---- */
-function qd(){return S.quote??={name:"",margen:30,arts:[blankArt()]}}
+/* ---- Cotizar (por producto) ---- */
+function qd(){return S.quote??={name:"",margen:30,prods:[]}}
 function quoteCalc(){
-  const q=qd(),m=(num(q.margen)||0)/100,U=usage();
-  return q.arts.map(a=>{
-    const c=artRow(a),cant=num(a.cant)||0,cost=c.costMat+c.elec+c.ins,unitCost=cant?cost/cant:0,sug=unitCost*(1+m),pv=num(a.pv)||0,price=pv>0?pv:sug,rev=price*cant;
-    const it=c.it,pu=num(a.pesoU)||0,pg=num(a.purga)||0;let max=null;
-    if(it&&it.bob>0&&pu>0){const left=it.bob*it.peso-(U[it.code]||0);max=Math.max(0,Math.floor((left-pg)/pu))}
-    const ii=a.insCode?insByCode(a.insCode):null,iq=num(a.insQ)||0;
-    if(ii&&cant>0&&iq>0){const mi=Math.max(0,Math.floor(insLeft(ii.code)/(iq/cant)));max=max==null?mi:Math.min(max,mi)}
-    return {a,c,cant,cost,unitCost,sug,price,rev,usedSug:!(pv>0),max,neta:rev-cost};
+  const q=qd(),mg=(num(q.margen)||0)/100,U=usage();
+  return q.prods.map(p=>{
+    const P=prodCalc(p),qty=P.qty,unitCost=qty?P.cost/qty:0,sug=unitCost*(1+mg),pv=num(p.pv)||0,price=pv>0?pv:sug,rev=price*qty;
+    const need={},needI={};
+    for(const a of p.arts){const pp=num(a.perProd)||0;if(!(pp>0))continue;
+      for(const c of a.cols)need[c.item]=(need[c.item]||0)+(num(c.pesoU)||0)*pp+(num(c.purga)||0);
+      if(a.insCode)needI[a.insCode]=(needI[a.insCode]||0)+(num(a.insQ)||0)}
+    let max=null;const lim=v=>{max=max==null?v:Math.min(max,v)};
+    for(const [k,g] of Object.entries(need)){const it=S.itemMap[k];if(g>0&&it?.bob>0)lim(Math.max(0,Math.floor((it.bob*it.peso-(U[k]?.g||0))/g)))}
+    for(const [k,n] of Object.entries(needI))if(n>0)lim(Math.max(0,Math.floor(insLeft(k)/n)));
+    return{p,P,qty,unitCost,sug,price,rev,usedSug:!(pv>0),max,neta:rev-P.cost};
   });
 }
 function renderQuote(){
   const q=qd();
-  const optsFor=cur=>S.items.filter(i=>i.peso||i.code===cur).map(i=>`<option value="${esc(i.code)}" ${i.code===cur?"selected":""}>${esc(i.code)} · ${esc(i.color)} ${esc(i.tipo)}</option>`).join("");
-  const arts=q.arts.map((a,i)=>`<div class="art" data-i="${i}">
-    <div class="art-h"><h3>Artículo ${i+1}</h3>${q.arts.length>1?`<button class="btn small ghost" data-qdel="${i}">Quitar</button>`:""}</div>
-    <div class="row r2"><div><label class="f">Descripción</label><input class="in" data-k="desc" value="${esc(a.desc)}" placeholder="Ej. Porta vasos"></div>
-      <div><label class="f">Material</label><select class="in" data-k="item">${optsFor(a.item)}</select></div></div>
-    <div class="row r4"><div><label class="f">Cantidad</label><input class="in" type="number" min="1" step="1" data-k="cant" value="${esc(a.cant)}"></div>
-      <div><label class="f">Peso por unidad (g)</label><input class="in" type="number" min="0" step="0.01" data-k="pesoU" value="${esc(a.pesoU)}"></div>
-      <div><label class="f">Purga estimada (g)</label><input class="in" type="number" min="0" step="0.01" data-k="purga" value="${esc(a.purga)}"></div>
-      <div><label class="f">Precio de venta por unidad ($)</label><input class="in" type="number" min="0" step="0.01" data-k="pv" value="${esc(a.pv)}" placeholder="vacío = sugerido"></div></div>
-    <div class="row r3"><div><label class="f">Tiempo total: horas</label><input class="in" type="number" min="0" step="1" data-k="h" value="${esc(a.h)}"></div>
-      <div><label class="f">Tiempo total: minutos</label><input class="in" type="number" min="0" max="59" step="1" data-k="m" value="${esc(a.m)}"></div><div></div></div>
-    <div class="row r3"><div><label class="f">Insumo del inventario</label><select class="in" data-k="insCode"><option value="">Ninguno / otro (manual)</option>${S.insumos.map(x=>`<option value="${esc(x.code)}" ${x.code===a.insCode?"selected":""}>${esc(x.code)} · ${esc(x.name)} (quedan ${nf(insLeft(x.code),0)})</option>`).join("")}</select></div>
-      ${a.insCode?`<div><label class="f">Cantidad total a usar</label><input class="in" type="number" min="0" step="1" data-k="insQ" value="${esc(a.insQ)}"></div><div></div>`
-      :`<div><label class="f">Descripción del insumo extra</label><input class="in" data-k="insumo" value="${esc(a.insumo)}" placeholder="Ej. Aro metálico"></div><div><label class="f">Costo del insumo ($, total)</label><input class="in" type="number" min="0" step="0.01" data-k="insC" value="${esc(a.insC)}"></div>`}</div>
-    <div class="prev" data-qprev></div></div>`).join("");
   $("#view-quote").innerHTML=`<div class="grid g2"><div class="panel">
     <div class="panel-h"><h2>Cotización</h2><span class="tag">solo estimado, no se guarda en el Excel</span></div>
-    <div class="row r2"><div><label class="f">Nombre del trabajo</label><input class="in" id="q-name" value="${esc(q.name)}" placeholder="Ej. Pedido de porta vasos"></div>
+    <div class="row r2"><div><label class="f">Nombre del trabajo</label><input class="in" id="q-name" value="${esc(q.name)}" placeholder="Ej. Pedido de portavasos"></div>
       <div><label class="f">Margen de ganancia deseado (%)</label><input class="in" type="number" min="0" step="1" id="q-margen" value="${esc(q.margen)}"></div></div>
-    ${arts}
-    <div class="actions"><button class="btn" id="qAdd">+ Añadir artículo</button><button class="btn primary" id="qToLote">Pasar a Registrar lote</button><button class="btn ghost" id="qClear">Limpiar</button></div>
-    <p class="hint" style="margin-top:12px">El precio sugerido = costo por unidad × (1 + margen). Si escribes un precio de venta, se usa ese en lugar del sugerido.</p></div>
+    ${q.prods.map((p,i)=>prodEditor(p,i,"Precio de venta por producto ($, vacío = sugerido)")).join("")}
+    ${addBar("qAddProd",true)}
+    <div class="actions"><button class="btn primary" id="qToLote">Pasar a Registrar lote</button><button class="btn ghost" id="qClear">Limpiar</button></div>
+    <p class="hint" style="margin-top:12px">Escribe los datos <b>por producto</b> y la cantidad de productos: yo hago la multiplicación. Precio sugerido = costo por producto × (1 + margen). Para algo no registrado usa «Producto Enigma»; ponle cantidad 0 a un artículo para dejarlo fuera.</p></div>
     <div class="panel"><div class="panel-h"><h2>Resultado estimado</h2></div><div id="qres"></div></div></div>`;
   updateQuote();
 }
 function updateQuote(){
   const q=qd(),R=quoteCalc(),U=usage();
-  document.querySelectorAll("#view-quote .art").forEach(el=>{const r=R[+el.dataset.i];
-    el.querySelector("[data-qprev]").innerHTML=`<span>Peso total <b>${nf(r.c.pesoTot,1)} g</b></span><span>Costo <b>${money(r.cost)}</b></span><span>Costo/unidad <b>${money(r.unitCost)}</b></span><span>${r.usedSug?"Precio sugerido":"Precio"} <b>${money(r.price)}</b></span>`});
+  updatePrevs($("#view-quote"),q.prods);
+  if(!R.length){$("#qres").innerHTML=`<p class="muted">Añade un producto para ver el estimado.</p>`;return}
   const sum=f=>R.reduce((a,r)=>a+f(r),0);
-  const g=sum(r=>r.c.pesoTot),min=sum(r=>r.c.min),cost=sum(r=>r.cost),rev=sum(r=>r.rev),neta=rev-cost,elec=sum(r=>r.c.elec),ins=sum(r=>r.c.ins),mat=sum(r=>r.c.costMat),units=sum(r=>r.cant);
-  const mreal=rev?neta/rev*100:0;
-  // materiales
-  const M={};for(const r of R){const it=r.c.it;if(!it)continue;(M[it.code]??={it,g:0}).g+=r.c.pesoTot}
-  const mats=Object.values(M).map(({it,g:gg})=>{const left=it.bob*it.peso-(U[it.code]||0),ok=it.bob>0&&left>=gg;
+  const g=sum(r=>r.P.pesoTot),min=sum(r=>r.P.min),cost=sum(r=>r.P.cost),rev=sum(r=>r.rev),neta=rev-cost,elec=sum(r=>r.P.elec),ins=sum(r=>r.P.ins),mat=sum(r=>r.P.costMat),units=sum(r=>r.qty);
+  const M={},I={};
+  for(const r of R)r.p.arts.forEach((a,i)=>{const c=r.P.C[i];if(!c.n)return;
+    for(const k of c.cols)if(k.it)(M[k.it.code]??={it:k.it,g:0}).g+=k.pesoTot;if(a.insCode)I[a.insCode]=(I[a.insCode]||0)+c.insQ});
+  const mats=Object.values(M).map(({it,g:gg})=>{const left=it.bob*it.peso-(U[it.code]?.g||0),ok=it.bob>0&&left>=gg;
     return `<tr><td><i class="sw" style="background:${swatch(it.color)};display:inline-block;vertical-align:middle;margin-right:6px"></i><b>${esc(it.code)}</b></td><td class="num">${nf(gg,1)} g</td><td class="num">${it.peso?nf(gg/it.peso*100,0)+"%":"—"}</td><td class="num">${it.bob>0?nf(Math.max(0,left),0)+" g":"sin bobinas registradas"}</td><td class="${ok?"pos":"neg"}">${ok?"Alcanza":it.bob>0?"Faltan "+nf(gg-left,0)+" g":"Revisa inventario"}</td></tr>`}).join("");
-  // insumos
-  const I={};for(const r of R){if(!r.a.insCode)continue;(I[r.a.insCode]??=0);I[r.a.insCode]+=num(r.a.insQ)||0}
   const insr=Object.entries(I).map(([c,n])=>{const i=insByCode(c),left=insLeft(c),ok=left>=n;
     return `<tr><td><b>${esc(c)}</b> ${esc(i?.name||"")}</td><td class="num">${nf(n,0)}</td><td class="num">${nf(left,0)}</td><td class="${ok?"pos":"neg"}">${ok?"Alcanza":"Faltan "+nf(n-left,0)}</td></tr>`}).join("");
-  const maxr=R.filter(r=>r.max!=null).map(r=>`<div class="nf-sm" style="margin-top:4px">${esc(r.a.desc||"Artículo")}: con tu stock actual podrías hacer hasta <b>${nf(r.max,0)}</b> unidades (pides ${nf(r.cant,0)}).</div>`).join("");
-  const rows=R.map(r=>`<tr><td>${esc(r.a.desc||"—")} <b>×${nf(r.cant,0)}</b></td><td class="num">${money(r.unitCost)}</td><td class="num">${money(r.price)}${r.usedSug?' <span class="tag">sugerido</span>':""}</td><td class="num">${money(r.rev)}</td><td class="num ${r.neta>=0?"pos":"neg"}">${money(r.neta)}</td></tr>`).join("");
+  const maxr=R.filter(r=>r.max!=null).map(r=>`<div class="nf-sm" style="margin-top:4px">${esc(r.p.name||"Producto")}: con tu stock actual podrías hacer hasta <b>${nf(r.max,0)}</b> productos (pides ${nf(r.qty,0)}).</div>`).join("");
+  const rows=R.map(r=>`<tr><td>${esc(r.p.name||"—")} <b>×${nf(r.qty,0)}</b></td><td class="num">${money(r.unitCost)}</td><td class="num">${money(r.price)}${r.usedSug?' <span class="tag">sugerido</span>':""}</td><td class="num">${money(r.rev)}</td><td class="num ${r.neta>=0?"pos":"neg"}">${money(r.neta)}</td></tr>`).join("");
   $("#qres").innerHTML=`<div class="stats" style="grid-template-columns:repeat(2,1fr)">
-    <div class="stat"><b>${nf(g,1)} g</b><span>filamento a consumir</span><small>${units} unidades</small></div>
-    <div class="stat"><b>${hm(min)}</b><span>tiempo de impresión</span><small>${nf(S.equipos.length?min/60:0,1)} h</small></div>
+    <div class="stat"><b>${nf(g,1)} g</b><span>filamento a consumir</span><small>${nf(units,0)} productos</small></div>
+    <div class="stat"><b>${hm(min)}</b><span>tiempo de impresión</span><small>${nf(min/60,1)} h</small></div>
     <div class="stat"><b>${money(cost)}</b><span>costo total estimado</span><small>material ${money(mat)} · luz ${money(elec)} · insumos ${money(ins)}</small></div>
     <div class="stat"><b>${money(rev)}</b><span>a poner a la venta</span><small>${q.name?esc(q.name):"total de la cotización"}</small></div>
-    <div class="stat"><b class="${neta>=0?"pos":"neg"}">${money(neta)}</b><span>ganancia neta</span><small>margen real ${nf(mreal,1)}%</small></div></div>
-    <div class="scroll" style="margin-top:14px"><table class="tbl"><thead><tr><th>Artículo</th><th class="num">Costo/unidad</th><th class="num">Precio/unidad</th><th class="num">Venta</th><th class="num">Ganancia</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="stat"><b class="${neta>=0?"pos":"neg"}">${money(neta)}</b><span>ganancia neta</span><small>margen real ${nf(rev?neta/rev*100:0,1)}%</small></div></div>
+    <div class="scroll" style="margin-top:14px"><table class="tbl"><thead><tr><th>Producto</th><th class="num">Costo/producto</th><th class="num">Precio/producto</th><th class="num">Venta</th><th class="num">Ganancia</th></tr></thead><tbody>${rows}</tbody></table></div>
     ${mats?`<h3 style="margin:16px 0 6px">Consumo de filamento vs. inventario</h3><div class="scroll"><table class="tbl"><thead><tr><th>Material</th><th class="num">Necesitas</th><th class="num">De una bobina</th><th class="num">Te queda</th><th>Estado</th></tr></thead><tbody>${mats}</tbody></table></div>`:""}
     ${insr?`<h3 style="margin:16px 0 6px">Insumos vs. inventario</h3><div class="scroll"><table class="tbl"><thead><tr><th>Insumo</th><th class="num">Necesitas</th><th class="num">Te queda</th><th>Estado</th></tr></thead><tbody>${insr}</tbody></table></div>`:""}
-    ${maxr?`<h3 style="margin:16px 0 4px">Cuánto podrías producir</h3>${maxr}<p class="hint">Cada artículo se calcula por separado con el stock actual.</p>`:""}`;
+    ${maxr?`<h3 style="margin:16px 0 4px">Cuánto podrías producir</h3>${maxr}<p class="hint">Cada producto se calcula por separado con el stock actual.</p>`:""}`;
   labelize();
 }
-$("#view-quote").addEventListener("input",e=>{const q=qd(),t=e.target;
-  if(t.id==="q-name")q.name=t.value;else if(t.id==="q-margen")q.margen=t.value;
-  else if(t.dataset.k){const a=q.arts[+t.closest(".art").dataset.i];a[t.dataset.k]=t.value;if(t.dataset.k==="insCode"){renderQuote();return}}
-  else return;
-  updateQuote()});
+bindProds($("#view-quote"),()=>qd().prods,()=>renderQuote(),()=>updateQuote());
+$("#view-quote").addEventListener("input",e=>{const q=qd(),t=e.target;if(t.id==="q-name")q.name=t.value;else if(t.id==="q-margen")q.margen=t.value;else return;updateQuote()});
+$("#view-quote").addEventListener("change",e=>{if(e.target.id==="qAddProd"&&pickProd(e.target.value,qd().prods))renderQuote()});
 $("#view-quote").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const q=qd();
-  if(b.id==="qAdd"){q.arts.push(blankArt());renderQuote()}
-  else if(b.dataset.qdel!==undefined){q.arts.splice(+b.dataset.qdel,1);renderQuote()}
-  else if(b.id==="qClear"){S.quote=null;renderQuote()}
+  if(b.id==="qClear"){S.quote=null;renderQuote()}
   else if(b.id==="qToLote"){
+    if(!q.prods.length)return toast("Añade al menos un producto.");
     const R=quoteCalc();
     S.draft={sel:"new",articulo:q.name,fecha:todayISO(),estado:"Producto terminado",destino:"VENTA",stLote:"Pendiente",editId:null,equipo:S.equipos[0]?.name||"",
-      arts:q.arts.map((a,i)=>({...a,pv:R[i].price?+R[i].price.toFixed(2):0}))};
+      prods:q.prods.map((p,i)=>{const c=cloneP(p);c.pv=+R[i].price.toFixed(2);return c})};
     setTab("reg");toast("Cotización copiada a Registrar lote. Revisa y registra.")}});
-
 
 /* ---- Etiqueta como imagen (PNG) ---- */
 async function labelCanvas(){
@@ -1250,6 +1351,37 @@ async function labelImage(mode){
     document.body.appendChild(m);
   }catch(e){console.error(e);toast("No se pudo crear la imagen: "+e.message,5000)}
 }
+
+/* ---- Catálogo de productos ---- */
+const nextProdCode=()=>{let mx=0;for(const p of S.productos){const m=/^PRD-(\d+)$/.exec(p.code);if(m)mx=Math.max(mx,+m[1])}return "PRD-"+String(mx+1).padStart(3,"0")};
+function renderProd(){
+  const pd=S.prodDraft,p=pd?.prod;
+  const rows=S.productos.map((c,i)=>{const P=prodCalc({...c,qty:1}),pv=num(c.pv)||0,g=pv-P.cost;
+    return `<tr><td><b>${esc(c.code)}</b></td><td>${esc(c.name)}</td><td>${c.mode==="std"?"Estándar":"Personalizable"}</td><td class="num">${c.arts.length}</td><td class="num">${hm(P.min)}</td><td class="num">${nf(P.pesoTot,0)} g</td><td class="num">${money(P.cost)}</td><td class="num">${pv?money(pv):"—"}</td><td class="num ${g>=0?"pos":"neg"}">${pv?money(g):"—"}</td>
+      <td><button class="btn small ghost" data-pedit="${i}">Editar</button> <button class="btn small ghost" data-pdup="${i}">Duplicar</button> <button class="btn small danger" data-pdel="${i}">Eliminar</button></td></tr>`}).join("");
+  const form=p?`<div class="panel"><div class="panel-h"><h2>${pd.idx>=0?"Editar "+esc(p.code):"Nuevo producto"}</h2></div>
+    <div class="prod" data-pi="0"><div class="row r3"><div><label class="f">Nombre del producto</label><input class="in" data-cf="name" value="${esc(p.name)}" placeholder="Ej. Portavasos home"></div>
+      <div><label class="f">Tipo</label><select class="in" data-cf="mode"><option value="std" ${p.mode==="std"?"selected":""}>Estándar (precio y artículos fijos)</option><option value="custom" ${p.mode!=="std"?"selected":""}>Personalizable (se edita en cada lote)</option></select></div>
+      <div><label class="f">Precio de venta por producto ($)</label><input class="in" type="number" min="0" step="0.01" data-cf="pv" value="${esc(p.pv)}"></div></div>
+      ${prodBody(p,false)}<div class="prev prev-p" data-pprev></div></div>
+    <p class="hint">Todo se define <b>por producto</b>: si el portavasos lleva 7 piezas y 20 min de impresión, así se escribe aquí. Al registrar un lote se multiplica por la cantidad de productos.</p>
+    <div class="actions"><button class="btn primary" id="pSave">Guardar producto</button><button class="btn ghost" id="pCancel">Cancelar</button></div></div>`
+    :`<div class="actions"><button class="btn primary" id="pNew">+ Nuevo producto</button></div>`;
+  $("#view-prod").innerHTML=`<div class="panel"><div class="panel-h"><h2>Catálogo de productos</h2><span class="muted">Hoja Productos. Un producto agrupa uno o varios artículos.</span></div>
+    <div class="scroll"><table class="tbl"><thead><tr><th>Código</th><th>Producto</th><th>Tipo</th><th class="num">Artículos</th><th class="num">Tiempo</th><th class="num">Filamento</th><th class="num">Costo</th><th class="num">Precio</th><th class="num">Ganancia</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="10" class="muted">Aún no hay productos. Crea el primero.</td></tr>'}</tbody></table></div></div>${form}`;
+  if(p){p.qty=1;updatePrevs($("#view-prod"),[p])}
+}
+bindProds($("#view-prod"),()=>S.prodDraft?[S.prodDraft.prod]:[],()=>renderProd(),()=>updatePrevs($("#view-prod"),S.prodDraft?[S.prodDraft.prod]:[]));
+$("#view-prod").addEventListener("input",e=>{const t=e.target;if(t.dataset.cf&&S.prodDraft){S.prodDraft.prod[t.dataset.cf]=t.value;updatePrevs($("#view-prod"),[S.prodDraft.prod])}});
+$("#view-prod").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const D=b.dataset;
+  if(b.id==="pNew"){S.prodDraft={idx:-1,prod:{kind:"cat",code:nextProdCode(),name:"",mode:"custom",qty:1,pv:"",arts:[blankArt()]}};renderProd()}
+  else if(D.pedit!==undefined){S.prodDraft={idx:+D.pedit,prod:cloneP(S.productos[+D.pedit])};renderProd();window.scrollTo(0,document.body.scrollHeight)}
+  else if(D.pdup!==undefined){const c=cloneP(S.productos[+D.pdup]);c.code=nextProdCode();c.name+=" (copia)";S.prodDraft={idx:-1,prod:c};renderProd();window.scrollTo(0,document.body.scrollHeight)}
+  else if(D.pdel!==undefined){const c=S.productos[+D.pdel];if(!confirm(`¿Eliminar «${c.name}» del catálogo? Los lotes ya registrados no cambian.`))return;S.productos.splice(+D.pdel,1);S.prodDirty=true;toast("Producto eliminado. Guarda el Excel para aplicarlo.");renderAll()}
+  else if(b.id==="pCancel"){S.prodDraft=null;renderProd()}
+  else if(b.id==="pSave"){const pd=S.prodDraft,p=pd.prod;p.qty=1;const er=checkProds([p]);if(er)return toast(er.replace(/^Producto 1: /,"").replace(/^Producto 1, /,""),5000);
+    p.name=p.name.trim();p.pv=num(p.pv)||0;if(pd.idx>=0)S.productos[pd.idx]=cloneP(p);else S.productos.push(cloneP(p));
+    S.prodDirty=true;S.prodDraft=null;toast(`${p.code} guardado. Guarda el Excel para escribirlo.`);renderAll()}});
 
 /* ---- Equipos ---- */
 function eqStats(name){const rs=S.rows.filter(r=>r.eq===name),sum=k=>rs.reduce((a,r)=>a+(r[k]||0),0);
