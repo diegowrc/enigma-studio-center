@@ -996,6 +996,13 @@ function insFields(a){const i=a.insCode?insByCode(a.insCode):null;
   return{insumo:(a.insumo||"").trim(),insumoCosto:num(a.insC)||0,insCode:"",insQty:0}}
 function draft(){return S.draft??={sel:"new",articulo:"",fecha:todayISO(),estado:"Producto terminado",destino:"HOGAR",stLote:"Pendiente",editId:null,equipo:S.equipos[0]?.name||"",prods:[]}}
 function optList(list,val){const l=val&&!list.includes(val)?[...list,val]:list;return l.map(e=>`<option ${e===val?"selected":""}>${esc(e)}</option>`).join("")}
+function loteProdsPanel(id){
+  const rows=S.rows.filter(r=>r.lote===id);if(!rows.length)return "";
+  const ps=prodsFromRows(rows),T=ps.map(prodCalc);
+  const tr=ps.map((p,i)=>{const P=T[i];return `<tr><td><b>${esc(p.name)}</b></td><td class="num">${nf(P.qty,0)}</td><td class="num">${hm(P.min)}</td><td class="num">${nf(P.pesoTot,1)} g</td><td class="num">${money(P.venta)}</td></tr>`}).join("");
+  return `<div class="art"><div class="art-h"><h3>Ya registrado en ${esc(id)}</h3><span class="tag">${ps.length} producto${ps.length===1?"":"s"}</span></div>
+    <div class="scroll"><table class="tbl"><thead><tr><th>Producto</th><th class="num">Cantidad</th><th class="num">Tiempo</th><th class="num">Filamento</th><th class="num">Venta</th></tr></thead><tbody>${tr}</tbody></table></div></div>`;
+}
 function renderReg(){
   const d=draft(),ed=!!d.editId,existing=[...new Set(S.rows.map(r=>r.lote))];
   const head=ed?`<div class="row r4"><div><label class="f">Nombre del lote o pedido</label><input class="in" id="d-articulo" value="${esc(d.articulo)}"></div>
@@ -1003,15 +1010,15 @@ function renderReg(){
       <div><label class="f">Estado final</label><select class="in" id="d-estado">${optList(ESTADOS,d.estado)}</select></div>
       <div><label class="f">Destino</label><select class="in" id="d-destino">${optList(DESTINOS,d.destino)}</select></div></div>`
     :`<div class="row r2"><div><label class="f">Lote</label><select class="in" id="d-sel"><option value="new">Lote nuevo: ${nextLoteId()}</option>${existing.map(l=>`<option value="${esc(l)}" ${d.sel===l?"selected":""}>Añadir productos a ${esc(l)}</option>`).join("")}</select></div>
-      <div class="${d.sel==="new"?"":"hidden"}"><label class="f">Fecha</label><input class="in" type="date" id="d-fecha" value="${esc(d.fecha)}"></div></div>
-    <div class="row r3 ${d.sel==="new"?"":"hidden"}"><div><label class="f">Nombre del lote o pedido</label><input class="in" id="d-articulo" value="${esc(d.articulo)}" placeholder="Ej. Pedido de Ana"></div>
+      <div><label class="f">Fecha</label><input class="in" type="date" id="d-fecha" value="${esc(d.fecha)}"></div></div>
+    <div class="row r3"><div><label class="f">Nombre del lote o pedido</label><input class="in" id="d-articulo" value="${esc(d.articulo)}" placeholder="Ej. Pedido de Ana"></div>
       <div><label class="f">Estado final</label><select class="in" id="d-estado">${optList(ESTADOS,d.estado)}</select></div>
       <div><label class="f">Destino</label><select class="in" id="d-destino">${optList(DESTINOS,d.destino)}</select></div></div>
-    ${d.sel!=="new"?`<p class="hint">Los productos nuevos heredan nombre, fecha, estado y destino de ${esc(d.sel)}.</p>`:""}`;
-  const eqRow=`<div class="row r4 ${(ed||d.sel==="new")?"":"hidden"}"><div><label class="f">Equipo</label><select class="in" id="d-equipo">${optList(S.equipos.map(e=>e.name),d.equipo)}</select></div>
+    ${d.sel!=="new"?loteProdsPanel(d.sel)+`<p class="hint">Si cambias el nombre, la fecha, el estado, el destino o el equipo, el cambio se aplica a todo el lote ${esc(d.sel)}. Puedes guardar solo esos cambios sin añadir productos.</p>`:""}`;
+  const eqRow=`<div class="row r4"><div><label class="f">Equipo</label><select class="in" id="d-equipo">${optList(S.equipos.map(e=>e.name),d.equipo)}</select></div>
     <div><label class="f">Estado del lote</label><select class="in stsel st-${STK[d.stLote]||"pen"}" id="d-stlote">${ESTLOTE.map(x=>`<option ${x===d.stLote?"selected":""}>${x}</option>`).join("")}</select></div></div>`;
   const btns=ed?`<button class="btn primary" id="saveEdit">Guardar cambios del lote</button><button class="btn ghost" id="cancelEdit">Cancelar</button><button class="btn danger" id="delEdit" style="margin-left:auto">Eliminar lote</button>`
-    :`<button class="btn primary" id="addLote">Registrar ${d.sel==="new"?"lote":"productos"}</button><button class="btn ghost" id="clearDraft">Limpiar</button>`;
+    :`<button class="btn primary" id="addLote">${d.sel==="new"?"Registrar lote":"Guardar en "+esc(d.sel)}</button><button class="btn ghost" id="clearDraft">Limpiar</button>`;
   $("#view-reg").innerHTML=`<div class="grid g2"><div class="panel">
     <div class="panel-h"><h2>${ed?"Editando lote "+esc(d.editId):"Registrar lote"}</h2>${ed?'<span class="tag">modo edición</span>':""}</div>
     ${head}${eqRow}${d.prods.map((p,i)=>prodEditor(p,i,"Precio de venta por producto ($)")).join("")}
@@ -1031,7 +1038,10 @@ function renderPending(){
 bindProds($("#view-reg"),()=>draft().prods,()=>renderReg(),()=>updatePrevs($("#view-reg"),draft().prods));
 $("#view-reg").addEventListener("input",e=>{const d=draft(),t=e.target;
   if(t.id==="d-articulo")d.articulo=t.value;else if(t.id==="d-fecha")d.fecha=t.value;else if(t.id==="d-estado")d.estado=t.value;else if(t.id==="d-destino")d.destino=t.value;else if(t.id==="d-equipo")d.equipo=t.value;else if(t.id==="d-stlote"){d.stLote=t.value;t.className="in stsel st-"+STK[t.value]}
-  else if(t.id==="d-sel"){d.sel=t.value;renderReg()}});
+  else if(t.id==="d-sel"){d.sel=t.value;const b=d.sel==="new"?null:S.rows.find(r=>r.lote===d.sel);
+    if(b)Object.assign(d,{articulo:b.articulo||b.desc,fecha:b.fecha||todayISO(),estado:b.estado||ESTADOS[0],destino:b.destino||DESTINOS[0],equipo:b.eq||S.equipos[0]?.name||"",stLote:b.estLote||"Finalizado"});
+    else Object.assign(d,{articulo:"",fecha:todayISO(),estado:"Producto terminado",destino:"HOGAR",equipo:S.equipos[0]?.name||"",stLote:"Pendiente"});
+    renderReg()}});
 $("#view-reg").addEventListener("change",e=>{if(e.target.id==="addProd"&&pickProd(e.target.value,draft().prods))renderReg()});
 $("#view-reg").addEventListener("click",e=>{const d=draft(),b=e.target.closest("button");if(!b)return;
   if(b.id==="clearDraft"){S.draft=null;renderReg()}
@@ -1043,10 +1053,11 @@ $("#view-reg").addEventListener("click",e=>{const d=draft(),b=e.target.closest("
   else if(b.id==="addLote")commitDraft()});
 function commitDraft(){
   const d=draft(),isNew=d.sel==="new";
-  if(isNew&&!d.articulo.trim())return toast("Escribe el nombre del lote o pedido.",5000);
-  const er=checkProds(d.prods);if(er)return toast(er,5000);
-  const base=isNew?null:S.rows.find(r=>r.lote===d.sel),id=isNew?nextLoteId():d.sel;
-  const m=isNew?{fecha:d.fecha,articulo:d.articulo.trim(),estado:d.estado,destino:d.destino,equipo:d.equipo,estLote:d.stLote}:{fecha:base.fecha,articulo:base.articulo,estado:base.estado,destino:base.destino,equipo:base.equipo||base.eq,estLote:base.estLote};
+  if(!d.articulo.trim())return toast("Escribe el nombre del lote o pedido.",5000);
+  const er=(!isNew&&!d.prods.length)?"":checkProds(d.prods);if(er)return toast(er,5000);
+  const id=isNew?nextLoteId():d.sel;
+  const m={fecha:d.fecha||todayISO(),articulo:d.articulo.trim(),estado:d.estado,destino:d.destino,equipo:d.equipo,estLote:d.stLote};
+  if(!isNew)S.rows.filter(r=>r.lote===id).forEach(r=>{Object.assign(r,m,{dirty:true});derive(r)});
   const off=new Set(S.rows.filter(r=>r.lote===id).map(instKey)).size;
   S.rows.push(...prodRows(d.prods,{...m,id,src:"new"},off));
   S.draft=null;S.labelLote=id;toast(`${id} registrado. Guarda el Excel para escribirlo.`);renderAll();
