@@ -382,6 +382,8 @@ const todayISO=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezone
 const colNum=c=>[...c].reduce((a,ch)=>a*26+ch.charCodeAt(0)-64,0);
 const colOf=ref=>ref.replace(/\d+/g,"");
 const SW={negro:"#1d1d1f",chocolate:"#5b3a29",blanco:"#f2f2f2",rojo:"#d32f2f",azul:"#1e5bd8",verde:"#2e9e5b",amarillo:"#f2c200",gris:"#8d949e",naranja:"#ef7d1a",rosa:"#ec6aa8",morado:"#7b4fc4",celeste:"#4cb7e8",beige:"#d9c3a0",transparente:"#cfe6ee"};
+const itemFull=it=>{if(!it)return "";const ln=it.linea||[it.tipo,it.acabado].filter(Boolean).join(" ");
+  return [it.marca,ln,(it.color||"")+(it.ccode?` (${it.ccode})`:"")].filter(Boolean).join(" · ")};
 const swatch=c=>SW[String(c||"").toLowerCase().trim()]||"#9aa0aa";
 const DESTINOS=["VENTA","HOGAR","TALLER","PRUEBA","USO PERSONAL"];
 const ESTADOS=["Producto terminado","Producto dañado","Parcialmente dañado","Prueba"];
@@ -426,7 +428,7 @@ async function loadBuffer(buf,name){
   // Items
   S.items=[];S.lastItemRow=1;
   for(const [r,o] of itm){if(r<2||!o.A)continue;S.lastItemRow=Math.max(S.lastItemRow,r);
-    S.items.push({row:r,code:String(o.A).trim(),desc:o.B||"",peso:num(o.C),tipo:o.D||"",color:o.E||"",precio:num(o.F),kw:num(o.G),bob:num(o.I)||0,dirty:null})}
+    S.items.push({row:r,code:String(o.A).trim(),desc:o.B||"",peso:num(o.C),tipo:o.D||"",color:o.E||"",precio:num(o.F),kw:num(o.G),bob:num(o.I)||0,marca:String(o.K??"").trim(),linea:String(o.L??"").trim(),acabado:String(o.M??"").trim(),ccode:String(o.N??"").trim(),dirty:null})}
   const j2=itm.get(2)&&num(itm.get(2).J);S.tariff=j2||0.091;S.tariffDirty=false;
   S.itemMap=Object.fromEntries(S.items.map(i=>[i.code,i]));
   // Equipos
@@ -466,7 +468,7 @@ async function loadBuffer(buf,name){
 }
 function derive(r){
   const it=S.itemMap[r.item];
-  r.kw=it?.kw||0;r.precioKg=it?.precio||0;r.color=it?.color||"";r.tipo=it?.tipo||"";
+  r.matName=itemFull(it);r.kw=it?.kw||0;r.precioKg=it?.precio||0;r.color=it?.color||"";r.tipo=it?.tipo||"";
   r.pesoTot=(r.pesoU||0)*r.cant+(r.purga||0);
   r.costMat=r.pesoTot*r.precioKg/1000;
   r.kwh=r.kw*(r.min||0)/60;r.elec=r.kwh*S.tariff;
@@ -654,7 +656,7 @@ async function buildXlsx(){
   if(needItems){
     const d=parseXml(await zip.file(S.paths.Items).async("string"));const ix=rowIndex(d);
     const h=getRowEl(d,ix,1);
-    putCell(d,h,"I",{s:10,str:"Bobinas compradas"});putCell(d,h,"J",{s:10,str:"Tarifa eléctrica ($/kWh)"});
+    putCell(d,h,"I",{s:10,str:"Bobinas compradas"});putCell(d,h,"J",{s:10,str:"Tarifa eléctrica ($/kWh)"});[["K","Marca"],["L","Línea"],["M","Acabado"],["N","Código de color"]].forEach(([c,t])=>putCell(d,h,c,{s:10,str:t}));
     putCell(d,getRowEl(d,ix,2),"J",{num:S.tariff});
     let nr=S.lastItemRow;
     for(const it of S.items){
@@ -664,15 +666,17 @@ async function buildXlsx(){
         putCell(d,el,"A",{str:it.code});putCell(d,el,"B",{s:2,str:it.desc});putCell(d,el,"C",{s:2,num:it.peso});
         putCell(d,el,"D",{s:2,str:it.tipo});putCell(d,el,"E",{s:2,str:it.color});putCell(d,el,"F",{s:30,num:it.precio});putCell(d,el,"G",{num:it.kw});
         if(it.dirty==="new")putCell(d,el,"H",{f:`G${it.row}/60`,cached:(it.kw||0)/60});
+        putCell(d,el,"K",{s:2,str:it.marca||""});putCell(d,el,"L",{s:2,str:it.linea||""});putCell(d,el,"M",{s:2,str:it.acabado||""});putCell(d,el,"N",{s:2,str:it.ccode||""});
       }
       if(it.dirty||!it.bobWritten)putCell(d,el,"I",{s:2,num:it.bob||0});
     }
     // dimensión y ancho de columnas nuevas
-    const dim=d.getElementsByTagName("dimension")[0];if(dim)dim.setAttribute("ref",`A1:J${Math.max(nr,S.lastItemRow)}`);
+    const dim=d.getElementsByTagName("dimension")[0];if(dim)dim.setAttribute("ref",`A1:N${Math.max(nr,S.lastItemRow)}`);
     const cols=d.getElementsByTagName("cols")[0];
-    if(cols){const big=[...cols.children].find(c=>c.getAttribute("min")==="9"&&c.getAttribute("max")==="16384");
-      if(big){const mk1=(a,b,w)=>{const c=big.cloneNode(false);c.setAttribute("min",a);c.setAttribute("max",b);c.setAttribute("width",w);c.setAttribute("customWidth","1");return c};
-        cols.insertBefore(mk1("9","9","18"),big);cols.insertBefore(mk1("10","10","24"),big);big.setAttribute("min","11")}}
+    if(cols){const big=[...cols.children].find(c=>c.getAttribute("max")==="16384");
+      if(big){let mn=+big.getAttribute("min");
+        for(const [c,w] of [[9,18],[10,24],[11,16],[12,24],[13,14],[14,16]]){if(c>=mn){const n=big.cloneNode(false);n.setAttribute("min",String(c));n.setAttribute("max",String(c));n.setAttribute("width",String(w));n.setAttribute("customWidth","1");cols.insertBefore(n,big);mn=c+1}}
+        big.setAttribute("min",String(mn))}}
     zip.file(S.paths.Items,ser(d));
   }
   return zip.generateAsync({type:"arraybuffer",compression:"DEFLATE"});
@@ -820,7 +824,7 @@ function renderDash(){
   // inventario
   let inv="";const comp=S.items.filter(i=>i.peso&&i.precio!=null);
   for(const it of comp){const u=U[it.code]||{g:0,cost:0};const bought=it.bob*it.peso,left=bought-u.g,pct=bought?Math.max(0,left/bought*100):0;
-    inv+=`<div class="inv"><div class="inv-top"><i class="sw" style="background:${swatch(it.color)}"></i><b>${esc(it.code)}</b><span class="muted">${esc(it.color)} · ${esc(it.tipo)}</span></div>`+
+    inv+=`<div class="inv"><div class="inv-top"><i class="sw" style="background:${swatch(it.color)}"></i><b>${esc(it.code)}</b><span class="muted">${esc(itemFull(it))}</span></div>`+
     (bought?`<div class="bar"><i class="${pct<20?"low":""}" style="width:${pct}%"></i></div>
       <div class="inv-n"><span><b>${nf(Math.max(0,left),0)} g</b> restantes${left<0?` <span class="neg">(usaste ${nf(-left,0)} g más de lo registrado)</span>`:` · ≈ ${nf(Math.max(0,left)/it.peso,1)} bobinas`}</span>
       <span>${it.bob} comprada${it.bob===1?"":"s"} (${nf(bought,0)} g) · usados ${nf(u.g,0)} g · invertido ${money(it.bob*it.peso/1000*it.precio)} · consumido ${money(u.cost)}</span></div>`
@@ -885,7 +889,7 @@ function prodCalc(p){
   const cost=sum("cost"),venta=(num(p.pv)||0)*qty;
   return{qty,C,pesoTot:sum("pesoTot"),min:sum("min"),costMat:sum("costMat"),elec:sum("elec"),ins:sum("ins"),cost,venta,neta:venta-cost};
 }
-const matOpts=cur=>(cur?"":'<option value="" selected>Elige el filamento…</option>')+S.items.filter(i=>i.peso||i.code===cur).map(i=>`<option value="${esc(i.code)}" ${i.code===cur?"selected":""}>${esc(i.code)} · ${esc(i.color)} ${esc(i.tipo)}</option>`).join("");
+const matOpts=cur=>(cur?"":'<option value="" selected>Elige el filamento…</option>')+S.items.filter(i=>i.peso||i.code===cur).map(i=>`<option value="${esc(i.code)}" ${i.code===cur?"selected":""}>${esc(i.code)} · ${esc(itemFull(i))}</option>`).join("");
 function artEditor(a,i,locked,canDel,cat){
   const d=locked?" disabled":"";
   const ins=S.insumos.map(x=>`<option value="${esc(x.code)}" ${x.code===a.insCode?"selected":""}>${esc(x.code)} · ${esc(x.name)} (quedan ${nf(insLeft(x.code),0)})</option>`).join("");
@@ -1235,7 +1239,7 @@ function renderAna(){
    <div class="panel"><div class="panel-h"><h2>Flujo por lote (g/min)</h2></div><div class="legend"><span><i style="background:var(--accent);height:4px"></i>g/min</span><span><i style="background:var(--P)"></i>Promedio global</span></div>${line}</div></div>
    <div class="panel"><div class="panel-h"><h2>Detalle por lote</h2><span class="muted">«Sin purga» solo cuenta el material que quedó en las piezas</span></div>
     <div class="scroll"><table class="tbl"><thead><tr><th>Lote</th><th>Artículo</th><th class="num">Tiempo</th><th class="num">Material total</th><th class="num">Purga</th><th class="num">g/min</th><th class="num">g/min sin purga</th><th class="num">vs. promedio</th><th></th></tr></thead><tbody>${trs}</tbody></table></div></div>
-   ${prodSection()}<div class="grid g2e">${grp(r=>r.tipo?`${r.tipo}${r.color?" · "+r.color:""}`:r.item,"Por material","Material")}${grp(r=>r.eq,"Por equipo","Equipo")}</div>`;
+   ${prodSection()}<div class="grid g2e">${grp(r=>r.item?`${r.item} · ${r.matName}`:"—","Por filamento","Filamento")}${grp(r=>r.eq,"Por equipo","Equipo")}</div>`;
 }
 
 /* ---- Cotizar (por producto) ---- */
@@ -1554,19 +1558,24 @@ function renderMat(){
   if((S.invSec||"mat")==="ins")return renderIns(invSwitch());
   const U=usage(),e=S.items.find(i=>i.code===S.editCode);
   const rows=S.items.map(i=>{const u=U[i.code]?.g||0,ok=i.peso&&i.precio!=null;
-    return `<tr><td><i class="sw" style="background:${swatch(i.color)};display:inline-block;vertical-align:middle;margin-right:8px"></i><b>${esc(i.code)}</b>${i.dirty?' <span class="tag">sin guardar</span>':""}</td><td>${esc(i.desc)||'<span class="muted">sin descripción</span>'}</td>
+    return `<tr><td><i class="sw" style="background:${swatch(i.color)};display:inline-block;vertical-align:middle;margin-right:8px"></i><b>${esc(i.code)}</b>${i.dirty?' <span class="tag">sin guardar</span>':""}</td><td>${esc(i.marca)||'<span class="muted">—</span>'}</td><td>${esc(i.linea||i.tipo)}</td><td>${esc(i.acabado)||'<span class="muted">—</span>'}</td><td>${esc(i.color)}${i.ccode?` <span class="tag">${esc(i.ccode)}</span>`:""}</td>
       <td class="num">${i.peso?nf(i.peso,0)+" g":"—"}</td><td class="num">${i.precio!=null?money(i.precio):"—"}</td>
       <td class="num"><input class="in" style="width:70px;text-align:right" type="number" min="0" step="1" value="${i.bob}" data-bob="${esc(i.code)}" aria-label="Bobinas compradas de ${esc(i.code)}"></td>
       <td class="num">${nf(u,0)} g</td><td class="num">${ok?nf(Math.max(0,i.bob*i.peso-u),0)+" g":"—"}</td>
       <td><button class="btn small" data-plus="${esc(i.code)}">+1 bobina</button> <button class="btn small ghost" data-edit="${esc(i.code)}">Editar</button></td></tr>`}).join("");
-  const f=e||{code:"",desc:"",peso:1000,tipo:"PLA",color:"",precio:20,kw:0.098,bob:1};
+  const f=e||{code:"",desc:"",peso:1000,tipo:"PLA",color:"",precio:20,kw:0.098,bob:1,marca:"",linea:"",acabado:"",ccode:""};
+  const uniq=(k,extra)=>[...new Set([...S.items.map(i=>i[k]).filter(Boolean),...extra])].map(x=>`<option value="${esc(x)}">`).join("");
   $("#view-mat").innerHTML=invSwitch()+`<div class="panel"><div class="panel-h"><h2>Materiales</h2><span class="muted">Hoja Items. El restante = bobinas × peso − lo usado en los lotes.</span></div>
-    <div class="scroll"><table class="tbl"><thead><tr><th>Código</th><th>Descripción</th><th class="num">Bobina</th><th class="num">Precio/kg</th><th class="num">Bobinas compradas</th><th class="num">Usado</th><th class="num">Restante</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>
+    <div class="scroll"><table class="tbl"><thead><tr><th>Código</th><th>Marca</th><th>Línea</th><th>Acabado</th><th>Color</th><th class="num">Bobina</th><th class="num">Precio/kg</th><th class="num">Bobinas compradas</th><th class="num">Usado</th><th class="num">Restante</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>
   <div class="grid g2e"><div class="panel"><div class="panel-h"><h2>${e?"Editar "+esc(e.code):"Añadir material"}</h2></div>
-    <div class="row r3"><div><label class="f">Tipo</label><input class="in" id="m-tipo" value="${esc(f.tipo)}" list="tipos" ${e?"disabled":""}><datalist id="tipos"><option>PLA<option>PETG<option>ABS<option>TPU<option>ASA</datalist></div>
+    <div class="row r3"><div><label class="f">Marca</label><input class="in" id="m-marca" value="${esc(f.marca)}" list="marcas" placeholder="Ej. Polymaker"><datalist id="marcas">${uniq("marca",["Bambu Lab","Polymaker"])}</datalist></div>
+      <div><label class="f">Línea / serie</label><input class="in" id="m-linea" value="${esc(f.linea)}" list="lineas" placeholder="Ej. Panchroma Matte"><datalist id="lineas">${uniq("linea",["PLA Basic","PLA+","PLA+ HS","Panchroma Matte (antes PolyTerra)"])}</datalist></div>
+      <div><label class="f">Acabado</label><input class="in" id="m-acabado" value="${esc(f.acabado)}" list="acabados" placeholder="Ej. Matte"><datalist id="acabados">${uniq("acabado",["Matte","Basic","Silk","Brillante"])}</datalist></div></div>
+    <div class="row r4"><div><label class="f">Material base</label><input class="in" id="m-tipo" value="${esc(f.tipo)}" list="tipos" ${e?"disabled":""}><datalist id="tipos"><option>PLA<option>PETG<option>ABS<option>TPU<option>ASA</datalist></div>
       <div><label class="f">Color</label><input class="in" id="m-color" value="${esc(f.color)}"></div>
-      <div><label class="f">Código</label><input class="in" id="m-code" value="${esc(f.code)}" placeholder="se asigna solo" disabled></div></div>
-    <div class="row"><div><label class="f">Descripción</label><input class="in" id="m-desc" value="${esc(f.desc)}" placeholder="PLA Basic Color Negro 1 kg"></div></div>
+      <div><label class="f">Código de color (fabricante)</label><input class="in" id="m-ccode" value="${esc(f.ccode)}" placeholder="Ej. 10101"></div>
+      <div><label class="f">Código interno</label><input class="in" id="m-code" value="${esc(f.code)}" placeholder="se asigna solo" disabled></div></div>
+    <div class="row"><div><label class="f">Descripción (opcional)</label><input class="in" id="m-desc" value="${esc(f.desc)}" placeholder="Si lo dejas vacío se arma solo"></div></div>
     <div class="row r4"><div><label class="f">Peso de bobina (g)</label><input class="in" type="number" id="m-peso" value="${esc(f.peso)}"></div>
       <div><label class="f">Precio por kg ($)</label><input class="in" type="number" step="0.01" id="m-precio" value="${esc(f.precio)}"></div>
       <div><label class="f">Consumo (kWh)</label><input class="in" type="number" step="0.001" id="m-kw" value="${esc(f.kw)}"></div>
@@ -1587,10 +1596,11 @@ function renderMat(){
       const v=id=>$("#"+id).value.trim();
       if(!v("m-color")||!v("m-tipo"))return toast("Indica tipo y color.");
       if(!(num(v("m-peso"))>0)||num(v("m-precio"))==null)return toast("Revisa peso y precio.");
-      if(e){Object.assign(e,{desc:v("m-desc"),color:v("m-color"),peso:num(v("m-peso")),precio:num(v("m-precio")),kw:num(v("m-kw"))||0,bob:Math.max(0,num(v("m-bob"))||0)});e.dirty=e.dirty==="new"?"new":"edit";S.editCode=null}
+      const ex={marca:v("m-marca"),linea:v("m-linea"),acabado:v("m-acabado"),ccode:v("m-ccode")};
+      if(e){Object.assign(e,ex,{desc:v("m-desc"),color:v("m-color"),peso:num(v("m-peso")),precio:num(v("m-precio")),kw:num(v("m-kw"))||0,bob:Math.max(0,num(v("m-bob"))||0)});e.dirty=e.dirty==="new"?"new":"edit";S.editCode=null}
       else{const tipo=v("m-tipo").toUpperCase();let mx=0;for(const i of S.items){const m=new RegExp("^"+tipo.replace(/[^A-Z0-9]/g,"")+"-(\\d+)$").exec(i.code);if(m)mx=Math.max(mx,+m[1])}
         const code=`${tipo}-${String(mx+1).padStart(3,"0")}`;
-        S.items.push({row:0,code,desc:v("m-desc")||`${tipo} ${v("m-color")} ${nf(num(v("m-peso"))/1000,1)} kg`,peso:num(v("m-peso")),tipo,color:v("m-color"),precio:num(v("m-precio")),kw:num(v("m-kw"))||0,bob:Math.max(0,num(v("m-bob"))||0),dirty:"new"});toast(`Material ${code} añadido.`)}
+        S.items.push({row:0,code,...ex,desc:v("m-desc")||`${[ex.marca,ex.linea||tipo,ex.acabado,v("m-color")].filter(Boolean).join(" ")} ${nf(num(v("m-peso"))/1000,1)} kg`,peso:num(v("m-peso")),tipo,color:v("m-color"),precio:num(v("m-precio")),kw:num(v("m-kw"))||0,bob:Math.max(0,num(v("m-bob"))||0),dirty:"new"});toast(`Material ${code} añadido.`)}
       refresh()}};
 }
 /* ============ contraseña de edición ============ */
