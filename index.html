@@ -983,17 +983,43 @@ function renderLabel(){
     <div class="panel"><div class="panel-h"><h2>Ver otro lote</h2></div>
       <label class="f" for="labelSel">Lote</label><select class="in" id="labelSel" style="max-width:360px">${L.map(x=>`<option value="${esc(x.id)}" ${x.id===l.id?"selected":""}>${esc(x.id)} · ${esc(x.articulo)}</option>`).join("")}</select>
       <label class="f" style="margin-top:12px">Estado del lote</label>${stSelect(l.id,l.status)}
-      <div class="actions" style="margin-top:12px"><button class="btn" id="prevL">← Anterior</button><button class="btn" id="nextL">Siguiente →</button><button class="btn primary" id="printL">Imprimir etiqueta</button>${S.unlocked?`<button class="btn" id="editL">Editar lote</button><button class="btn danger" id="delL">Eliminar lote</button>`:""}</div></div>
+      <div class="actions" style="margin-top:12px"><button class="btn" id="prevL">← Anterior</button><button class="btn" id="nextL">Siguiente →</button><button class="btn primary" id="printL">Imprimir etiqueta</button><button class="btn" id="imgL">Ver como imagen</button><button class="btn" id="dlL">Descargar imagen</button>${S.unlocked?`<button class="btn" id="editL">Editar lote</button><button class="btn danger" id="delL">Eliminar lote</button>`:""}</div></div>
     <div class="panel"><div class="panel-h"><h2>Qué significa la letra</h2></div><div class="legendbox">
       <div><span class="badge L-A">A</span> Producto terminado (venta u otro uso)</div><div><span class="badge L-E">E</span> Terminado para taller u hogar</div>
       <div><span class="badge L-P">P</span> Prueba</div><div><span class="badge L-D">D</span> Dañado o parcialmente dañado</div></div></div></div></div>`;
   const go=id=>{S.labelLote=id;renderLabel()},i=L.findIndex(x=>x.id===l.id);
-  $("#labelSel").onchange=e=>go(e.target.value);$("#view-label").onchange=e=>{const s=e.target.closest("[data-stlote]");if(s)setLoteStatus(s.dataset.stlote,s.value)};$("#prevL").onclick=()=>go(L[(i-1+L.length)%L.length].id);$("#nextL").onclick=()=>go(L[(i+1)%L.length].id);$("#printL").onclick=()=>window.print();if(S.unlocked){$("#editL").onclick=()=>startEdit(l.id);$("#delL").onclick=()=>deleteLote(l.id)}
+  $("#labelSel").onchange=e=>go(e.target.value);$("#view-label").onchange=e=>{const s=e.target.closest("[data-stlote]");if(s)setLoteStatus(s.dataset.stlote,s.value)};$("#prevL").onclick=()=>go(L[(i-1+L.length)%L.length].id);$("#nextL").onclick=()=>go(L[(i+1)%L.length].id);$("#printL").onclick=()=>window.print();$("#imgL").onclick=()=>labelImage("view");$("#dlL").onclick=()=>labelImage("download");if(S.unlocked){$("#editL").onclick=()=>startEdit(l.id);$("#delL").onclick=()=>deleteLote(l.id)}
 }
 
 
 
 /* ---- Análisis de flujo (g/min) ---- */
+function prodSection(){
+  const P={};
+  for(const r of S.rows){if(r.destino!=="VENTA")continue;const name=(r.desc||r.articulo||"—").trim(),k=name.toLowerCase();
+    const o=P[k]??={name,l:new Set(),u:0,min:0,g:0,costo:0,venta:0,neta:0};
+    o.l.add(r.lote);o.u+=r.cant||0;o.min+=r.min||0;o.g+=r.pesoTot||0;o.costo+=r.costo||0;o.venta+=r.venta||0;o.neta+=r.neta||0}
+  const A=Object.values(P);
+  if(!A.length)return `<div class="panel"><div class="panel-h"><h2>Productos en venta</h2></div><p class="muted" style="margin:0">Aún no hay artículos con destino VENTA.</p></div>`;
+  A.forEach(o=>{o.h=o.min/60;o.perH=o.h>0?o.neta/o.h:0;o.margen=o.venta?o.neta/o.venta*100:0});
+  A.sort((a,b)=>b.neta-a.neta);
+  const hb=(arr,f)=>{const mx=Math.max(...arr.map(a=>Math.abs(a.v)),1e-9);return arr.map(a=>`<div style="margin-bottom:10px"><div class="inv-n" style="margin:0 0 4px"><b>${esc(a.n)}</b><span>${f(a.v)}</span></div><div class="bar"><i class="${a.v<0?"low":""}" style="width:${Math.abs(a.v)/mx*100}%"></i></div></div>`).join("")};
+  const T=k=>A.reduce((a,o)=>a+o[k],0);
+  const rows=A.map(o=>`<tr><td><b>${esc(o.name)}</b></td><td class="num">${o.l.size}</td><td class="num">${nf(o.u,0)}</td><td class="num">${hm(o.min)}</td><td class="num">${o.u?hm(o.min/o.u):"—"}</td><td class="num">${nf(o.g,0)} g</td><td class="num">${o.u?nf(o.g/o.u,1)+" g":"—"}</td><td class="num">${money(o.costo)}</td><td class="num">${money(o.venta)}</td><td class="num ${o.neta>=0?"pos":"neg"}"><b>${money(o.neta)}</b></td><td class="num ${o.neta>=0?"pos":"neg"}">${o.u?money(o.neta/o.u):"—"}</td><td class="num ${o.perH>=0?"pos":"neg"}">${o.min?money(o.perH):"—"}</td><td class="num">${nf(o.margen,0)} %</td></tr>`).join("");
+  const tot=`<div class="stats" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
+    <div class="stat"><b>${A.length}</b><span>productos en venta</span><small>${nf(T("u"),0)} unidades</small></div>
+    <div class="stat"><b>${nf(T("min")/60,1)} h</b><span>tiempo de producción</span><small>${nf(T("g"),0)} g de filamento</small></div>
+    <div class="stat"><b>${money(T("venta"))}</b><span>ventas</span><small>costo ${money(T("costo"))}</small></div>
+    <div class="stat"><b class="${T("neta")>=0?"pos":"neg"}">${money(T("neta"))}</b><span>ganancia neta</span><small>${T("min")?money(T("neta")/(T("min")/60))+" por hora":""}</small></div></div>`;
+  return `<div class="panel"><div class="panel-h"><h2>Productos en venta</h2><span class="muted">Artículos con destino VENTA, agrupados por descripción</span></div>${tot}
+    <div class="scroll"><table class="tbl"><thead><tr><th>Producto</th><th class="num">Lotes</th><th class="num">Unidades</th><th class="num">Tiempo total</th><th class="num">Tiempo/unidad</th><th class="num">Filamento</th><th class="num">g/unidad</th><th class="num">Costo</th><th class="num">Ventas</th><th class="num">Ganancia</th><th class="num">Ganancia/unidad</th><th class="num">Ganancia/hora</th><th class="num">Margen</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <p class="hint" style="margin:10px 0 0">Filamento incluye la purga. Ganancia = ventas − material − luz − insumos. Para que un producto se agrupe bien, escribe su descripción siempre igual al registrar.</p></div>
+  <div class="grid g2e"><div class="panel"><div class="panel-h"><h2>Ganancia por producto</h2></div>${hb(A.map(o=>({n:o.name,v:o.neta})),money)}</div>
+    <div class="panel"><div class="panel-h"><h2>Ganancia por hora de impresión</h2><span class="muted">Qué producto rinde más tu tiempo</span></div>${hb([...A].filter(o=>o.min).sort((a,b)=>b.perH-a.perH).map(o=>({n:o.name,v:o.perH})),v=>money(v)+" / h")}</div></div>
+  <div class="grid g2e"><div class="panel"><div class="panel-h"><h2>Tiempo de producción por producto</h2></div>${hb([...A].sort((a,b)=>b.min-a.min).map(o=>({n:o.name,v:o.min})),hm)}</div>
+    <div class="panel"><div class="panel-h"><h2>Filamento consumido por producto</h2></div>${hb([...A].sort((a,b)=>b.g-a.g).map(o=>({n:o.name,v:o.g})),v=>nf(v,0)+" g")}</div></div>`;
+}
+
 function renderAna(){
   const L=lotes().filter(l=>l.min>0&&l.g>0).map(l=>({...l,purga:l.rows.reduce((a,r)=>a+(r.purga||0),0),flow:l.g/l.min}));
   if(!L.length){$("#view-ana").innerHTML=`<div class="panel"><p class="muted">Aún no hay lotes con tiempo y peso registrados.</p></div>`;return}
@@ -1043,7 +1069,7 @@ function renderAna(){
    <div class="panel"><div class="panel-h"><h2>Flujo por lote (g/min)</h2></div><div class="legend"><span><i style="background:var(--accent);height:4px"></i>g/min</span><span><i style="background:var(--P)"></i>Promedio global</span></div>${line}</div></div>
    <div class="panel"><div class="panel-h"><h2>Detalle por lote</h2><span class="muted">«Sin purga» solo cuenta el material que quedó en las piezas</span></div>
     <div class="scroll"><table class="tbl"><thead><tr><th>Lote</th><th>Artículo</th><th class="num">Tiempo</th><th class="num">Material total</th><th class="num">Purga</th><th class="num">g/min</th><th class="num">g/min sin purga</th><th class="num">vs. promedio</th><th></th></tr></thead><tbody>${trs}</tbody></table></div></div>
-   <div class="grid g2e">${grp(r=>r.tipo?`${r.tipo}${r.color?" · "+r.color:""}`:r.item,"Por material","Material")}${grp(r=>r.eq,"Por equipo","Equipo")}</div>`;
+   ${prodSection()}<div class="grid g2e">${grp(r=>r.tipo?`${r.tipo}${r.color?" · "+r.color:""}`:r.item,"Por material","Material")}${grp(r=>r.eq,"Por equipo","Equipo")}</div>`;
 }
 
 /* ---- Cotizar ---- */
@@ -1129,6 +1155,101 @@ $("#view-quote").addEventListener("click",e=>{const b=e.target.closest("button")
     S.draft={sel:"new",articulo:q.name,fecha:todayISO(),estado:"Producto terminado",destino:"VENTA",stLote:"Pendiente",editId:null,equipo:S.equipos[0]?.name||"",
       arts:q.arts.map((a,i)=>({...a,pv:R[i].price?+R[i].price.toFixed(2):0}))};
     setTab("reg");toast("Cotización copiada a Registrar lote. Revisa y registra.")}});
+
+
+/* ---- Etiqueta como imagen (PNG) ---- */
+async function labelCanvas(){
+  const el=$("#label");if(!el)return null;
+  try{await document.fonts.load('800 34px Montserrat');await document.fonts.load('400 17px Montserrat')}catch(e){}
+  const SC=3,W=420,FONT='"Helvetica Neue",Helvetica,Arial,sans-serif',MONT='Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif';
+  const F=(w,sz,fam=FONT)=>`${w} ${sz}px ${fam}`;
+  const mk=h=>{const c=document.createElement("canvas");c.width=W*SC;c.height=Math.ceil(h*SC);const x=c.getContext("2d");x.scale(SC,SC);return [c,x]};
+  const runsOf=(n,base)=>{const out=[];const walk=(nd,b)=>{for(const c of nd.childNodes){
+      if(c.nodeType===3)out.push({t:c.textContent.replace(/\s+/g," "),b});
+      else if(c.nodeName==="BR")out.push({br:1});
+      else if(c.nodeType===1)walk(c,b||c.tagName==="B"||+getComputedStyle(c).fontWeight>=700)}};walk(n,!!base);return out};
+  const run=(x,draw,H)=>{
+    x.textBaseline="alphabetic";
+    const wrap=(rs,size,maxW)=>{const lines=[[]];let cur=0;
+      for(const r of rs){
+        if(r.br){lines.push([]);cur=0;continue}
+        for(const p of r.t.split(/(\s+)/)){if(!p)continue;
+          x.font=F(r.b?700:400,size);const w=x.measureText(p).width,line=lines.at(-1);
+          if(/^\s+$/.test(p)){if(line.length){line.push({t:" ",b:r.b,w});cur+=w}continue}
+          if(cur+w>maxW&&line.length){while(line.length&&line.at(-1).t===" ")cur-=line.pop().w;lines.push([{t:p,b:r.b,w}]);cur=w}
+          else{line.push({t:p,b:r.b,w});cur+=w}}}
+      lines.forEach(l=>{while(l.length&&l.at(-1).t===" ")l.pop()});return lines};
+    const lineW=l=>l.reduce((a,s)=>a+s.w,0);
+    const drawLine=(l,xx,yb,size,right)=>{let cx=right?xx-lineW(l):xx;for(const s of l){x.font=F(s.b?(size>=14?800:700):400,size);x.fillStyle="#000";x.fillText(s.t,cx,yb);cx+=s.w}};
+    const rect=(a,b,w,h,c="#000")=>{if(draw){x.fillStyle=c;x.fillRect(a,b,w,h)}};
+    const spaced=(t,xx,yb,sp)=>{let cx=xx;for(const ch of t){if(draw)x.fillText(ch,cx,yb);cx+=x.measureText(ch).width+sp}return cx-xx};
+    const x0=14,cw=392;let y=12;
+    if(draw){x.fillStyle="#fff";x.fillRect(0,0,W,H)}
+    // cabecera
+    const top=el.querySelector(".nf-top"),left=top.children[0],right=top.children[1];
+    let ly=y;
+    const t1=left.querySelector(".t1").textContent.toUpperCase(),t2=left.querySelector(".t2").textContent.toUpperCase();
+    x.fillStyle="#000";x.font=F(800,34,MONT);const w1=spaced(t1,x0,ly+27,34*.03);
+    x.font=F(400,17,MONT);spaced(t2,x0+w1+9,ly+27,17*.24);ly+=34+6;
+    for(const l of wrap(runsOf(left.querySelector(".nf-id"),true),15,278)){drawLine(l,x0,ly+16,15);ly+=21.75}
+    for(const l of wrap(runsOf(left.querySelector(".nf-sm")),13,278)){drawLine(l,x0,ly+12.5,13);ly+=16.9}
+    const lt=right.querySelector(".nf-letter"),bx=x0+cw-104,by=y-2;
+    rect(bx,by,104,104,"#000");rect(bx+3,by+3,98,98,getComputedStyle(lt).backgroundColor);
+    if(draw){x.fillStyle="#fff";x.font=F(900,84);x.textAlign="center";x.fillText(lt.textContent,bx+52,by+82);
+      x.fillStyle="#000";x.font=F(700,11);x.fillText(right.querySelector(".nf-letter-cap").textContent,bx+52,by+104+3+10);x.textAlign="left"}
+    y+=Math.max(ly-y,104-2+3+16);
+    // resto
+    for(const c of [...el.children].slice(1)){
+      const cl=c.classList;
+      if(cl.contains("b8")){y+=8;rect(x0,y,cw,8);y+=8+6}
+      else if(cl.contains("b4")){y+=5;rect(x0,y,cw,4);y+=4+5}
+      else if(cl.contains("b1")){y+=3;rect(x0,y,cw,1);y+=1+3}
+      else if(cl.contains("nf-row")){
+        const ind=cl.contains("ind"),size=ind?13.5:14,lh=size*1.45,sp=c.children;
+        const rr=runsOf(sp[1]),rw=lineW(wrap(rr,size,1e6)[0]);
+        const ll=wrap(runsOf(sp[0]),size,cw-(ind?16:0)-rw-10),n=Math.max(1,ll.length);
+        rect(x0,y,cw,1);
+        if(draw){ll.forEach((l,i)=>drawLine(l,x0+(ind?16:0),y+1+2+i*lh+(lh-size)/2+size*.82,size));
+          drawLine(wrap(rr,size,1e6)[0],x0+cw,y+1+2+(lh-size)/2+size*.82,size,true)}
+        y+=1+2+n*lh+2}
+      else if(cl.contains("nf-big")){
+        if(draw){x.fillStyle="#000";x.font=F(800,14);x.textAlign="left";x.fillText(c.querySelector(".t").textContent,x0,y+40-6);
+          x.font=F(900,40);x.textAlign="right";x.fillText(c.querySelector(".v").textContent,x0+cw,y+36);x.textAlign="left"}
+        y+=40}
+      else if(cl.contains("nf-cols")){
+        if(draw){x.fillStyle="#000";x.font=F(800,12);x.textAlign="right";x.fillText(c.textContent.trim(),x0+cw,y+2+12*1.45/2+4);x.textAlign="left"}
+        y+=12*1.45+4}
+      else if(cl.contains("nf-foot")){
+        y+=6;for(const l of wrap(runsOf(c),12,cw)){drawLine(l,x0,y+11,12);y+=16.2}}
+    }
+    y+=12+2;
+    if(draw){x.strokeStyle="#000";x.lineWidth=2;x.strokeRect(1,1,W-2,y-2)}
+    return y;
+  };
+  let [c,x]=mk(3000);const h=run(x,false,0);
+  [c,x]=mk(h);run(x,true,h);return c;
+}
+async function labelImage(mode){
+  const id=S.labelLote;if(!id||!$("#label"))return;
+  const name=`etiqueta_enigma_center_lote${id}.png`;
+  try{
+    const c=await labelCanvas();
+    const blob=await new Promise(r=>c.toBlob(r,"image/png"));if(!blob)throw new Error("no se pudo crear la imagen");
+    const url=URL.createObjectURL(blob);
+    const download=async()=>{
+      const file=new File([blob],name,{type:"image/png"});
+      if(matchMedia("(pointer:coarse)").matches&&navigator.canShare&&navigator.canShare({files:[file]})){
+        try{await navigator.share({files:[file],title:name});return}catch(e){if(e.name==="AbortError")return}}
+      const a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();toast("Imagen descargada: "+name,4000)};
+    if(mode==="download"){await download();setTimeout(()=>URL.revokeObjectURL(url),8000);return}
+    const m=document.createElement("div");m.className="modal";m.innerHTML=`<div class="modal-card" style="max-width:480px;max-height:92vh;overflow:auto" role="dialog" aria-modal="true" aria-label="Etiqueta como imagen">
+      <img src="${url}" alt="Etiqueta ${esc(id)}" style="width:100%;height:auto;display:block;border:1px solid var(--line);background:#fff">
+      <p class="hint" style="margin:8px 0">${esc(name)}</p><div class="actions"><button class="btn primary" data-a="dl">Descargar imagen</button><button class="btn ghost" data-a="x">Cerrar</button></div></div>`;
+    const onKey=e=>{if(e.key==="Escape")close()};const close=()=>{m.remove();URL.revokeObjectURL(url);document.removeEventListener("keydown",onKey)};document.addEventListener("keydown",onKey);
+    m.addEventListener("click",e=>{if(e.target===m||e.target.closest('[data-a="x"]'))close();else if(e.target.closest('[data-a="dl"]'))download()});
+    document.body.appendChild(m);
+  }catch(e){console.error(e);toast("No se pudo crear la imagen: "+e.message,5000)}
+}
 
 /* ---- Equipos ---- */
 function eqStats(name){const rs=S.rows.filter(r=>r.eq===name),sum=k=>rs.reduce((a,r)=>a+(r[k]||0),0);
