@@ -166,11 +166,12 @@ label.f{display:block;font-size:13px;font-weight:600;color:var(--mute);margin-bo
 .legendbox div{display:flex;gap:10px;align-items:center}
 @media print{
   body{background:#fff}
-  .top,main>*:not(#view-label),#view-label>*:not(.labelwrap),.labelwrap>*:not(.nfcol),.nfcol>*:not(.nf),#toast,#tip,#saveFab,#modal{display:none!important}
+  .pr-hide,.top,#toast,#tip,#saveFab,#modal,#safariBar{display:none!important}
   main{padding:0;max-width:none}
   .nf{max-width:420px;margin:0}
   .nf-letter{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
+#view-label{margin-top:16px}
 .hidden{display:none!important}
 .pending-list .item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
 .pending-list .item:first-child{border-top:0}
@@ -288,14 +289,13 @@ html{background:var(--bg)}
     <div class="filebar" id="filebar"></div>
   </div>
   <nav class="tabs" role="tablist" id="tabs">
-    <button class="tab" role="tab" data-tab="dash" aria-selected="true"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span>Dashboard</span></button>
+    <button class="tab" role="tab" data-tab="dash" aria-selected="true"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span>Inicio</span></button>
     <button class="tab" role="tab" data-tab="ana" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V4M4 20h16"/><path d="M8 15l4-4 3 3 5-6"/></svg><span>Análisis</span></button>
-    <button class="tab" role="tab" data-tab="reg" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg><span>Registrar<span class="xl"> lote</span></span></button>
+    <button class="tab" role="tab" data-tab="reg" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h9l5 5v13H5z"/><path d="M14 3v5h5M8.5 13h7M8.5 17h5"/></svg><span>Lotes</span></button>
     <button class="tab" role="tab" data-tab="prod" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg><span>Productos</span></button>
-    <button class="tab" role="tab" data-tab="quote" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 7.5h7M8.5 12h2M13.5 12h2M8.5 16h2M13.5 16h2"/></svg><span>Cotizar</span></button>
-    <button class="tab" role="tab" data-tab="label" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h9l5 5v13H5z"/><path d="M14 3v5h5M8.5 13h7M8.5 17h5"/></svg><span>Etiqueta</span></button>
     <button class="tab" role="tab" data-tab="mat" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg><span>Inventario</span></button>
     <button class="tab" role="tab" data-tab="eq" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg><span>Equipos</span></button>
+    <button class="tab" role="tab" data-tab="quote" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 7.5h7M8.5 12h2M13.5 12h2M8.5 16h2M13.5 16h2"/></svg><span>Cotizar</span></button>
   </nav>
 </div></header>
 
@@ -314,9 +314,9 @@ html{background:var(--bg)}
   <section id="view-dash" class="hidden"></section>
   <section id="view-ana" class="hidden"></section>
   <section id="view-reg" class="hidden"></section>
+  <section id="view-label" class="hidden"></section>
   <section id="view-quote" class="hidden"></section>
   <section id="view-prod" class="hidden"></section>
-  <section id="view-label" class="hidden"></section>
   <section id="view-mat" class="hidden"></section>
   <section id="view-eq" class="hidden"></section>
 </main>
@@ -768,10 +768,17 @@ function renderAll(){
   const loaded=!!S.buf;
   document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tab===S.tab)));
   $("#view-empty").classList.toggle("hidden",loaded);
-  for(const v of ["dash","ana","reg","quote","prod","label","mat","eq"])$("#view-"+v).classList.toggle("hidden",!loaded||S.tab!==v);
+  for(const v of ["dash","ana","reg","quote","prod","label","mat","eq"])$("#view-"+v).classList.toggle("hidden",!loaded||!(S.tab===v||(v==="label"&&S.tab==="reg")));
   renderFilebar();
   if(!loaded)return;
-  ({dash:renderDash,ana:renderAna,reg:renderReg,quote:renderQuote,prod:renderProd,label:renderLabel,mat:renderMat,eq:renderEq})[S.tab]();labelize();
+  ({dash:renderDash,ana:renderAna,reg:()=>{renderReg();renderLabel()},quote:renderQuote,prod:renderProd,mat:renderMat,eq:renderEq})[S.tab]();labelize();
+}
+function printLabel(el){
+  if(!el)return;
+  const marked=[];let n=el;
+  while(n&&n!==document.body&&n.parentElement){for(const c of n.parentElement.children)if(c!==n){c.classList.add("pr-hide");marked.push(c)}n=n.parentElement}
+  const done=()=>{marked.forEach(c=>c.classList.remove("pr-hide"));window.removeEventListener("afterprint",done)};
+  window.addEventListener("afterprint",done);window.print();
 }
 function labelize(){document.querySelectorAll(".tbl").forEach(tb=>{const h=[...tb.querySelectorAll("thead th")].map(x=>x.textContent.trim());
   tb.querySelectorAll("tbody tr").forEach(tr=>[...tr.children].forEach((td,i)=>td.setAttribute("data-label",h[i]||"")))})}
@@ -848,16 +855,16 @@ function renderDash(){
      <p class="hint" style="margin:6px 0 0">Haz clic en un lote de la tabla para ver su etiqueta.</p></div></div></div>
    <div class="panel"><div class="panel-h stack"><h2>Lotes</h2>${chips}</div><div class="scroll"><table class="tbl"><thead><tr><th>Lote</th><th>Fecha</th><th>Artículo</th><th>Estado</th><th></th><th>Destino</th><th class="num">Peso</th><th class="num">Tiempo</th><th class="num">Costo</th><th class="num">Venta</th><th class="num">Neta</th>${S.unlocked?"<th></th>":""}</tr></thead><tbody>${lrows||'<tr><td colspan="12" class="muted">No hay lotes con este estado.</td></tr>'}</tbody></table></div></div>`;
   $("#view-dash").onchange=e=>{const s=e.target.closest("[data-stlote]");if(s)setLoteStatus(s.dataset.stlote,s.value)};
-  $("#view-dash").onclick=e=>{if(e.target.closest("[data-stlote]"))return;const sf=e.target.closest("[data-sf]");if(sf){S.stFilter=sf.dataset.sf;return renderAll()}const ed=e.target.closest("[data-edit-lote]");if(ed)return startEdit(ed.dataset.editLote);const dl=e.target.closest("[data-del-lote]");if(dl)return deleteLote(dl.dataset.delLote);const go=e.target.closest("[data-go]");if(go)return setTab(go.dataset.go);const tr=e.target.closest("tr[data-lote]");if(tr){S.labelLote=tr.dataset.lote;setTab("label")}};
+  $("#view-dash").onclick=e=>{if(e.target.closest("[data-stlote]"))return;const sf=e.target.closest("[data-sf]");if(sf){S.stFilter=sf.dataset.sf;return renderAll()}const ed=e.target.closest("[data-edit-lote]");if(ed)return startEdit(ed.dataset.editLote);const dl=e.target.closest("[data-del-lote]");if(dl)return deleteLote(dl.dataset.delLote);const go=e.target.closest("[data-go]");if(go)return setTab(go.dataset.go);const tr=e.target.closest("tr[data-lote]");if(tr){S.labelLote=tr.dataset.lote;setTab("reg");$("#view-label").scrollIntoView()}};
 }
 
 /* ---- Registrar ---- */
 /* ---- Productos: modelo compartido por Catálogo, Registrar y Cotizar ---- */
 const firstMat=()=>S.items.find(i=>i.peso)?.code||"";
-const blankCol=()=>({item:firstMat(),pesoU:"",purga:0});
-const blankArt=()=>({desc:"",perProd:1,cols:[blankCol()],h:0,m:"",insCode:"",insQ:"",insumo:"",insC:"",notas:""});
+const blankCol=cat=>({item:cat?"":firstMat(),pesoU:"",purga:0});
+const blankArt=cat=>({desc:"",perProd:1,cols:[blankCol(cat)],h:0,m:"",insCode:"",insQ:"",insumo:"",insC:"",notas:""});
 const cloneP=p=>JSON.parse(JSON.stringify(p));
-const prodFromCat=c=>({...cloneP(c),kind:"cat",qty:1});
+const prodFromCat=c=>{const q={...cloneP(c),kind:"cat",qty:1};q.arts.forEach(a=>a.cols.forEach(k=>{k.item=""}));return q};
 const prodFree=(name="")=>({kind:"free",code:"",name,mode:"custom",qty:1,pv:"",arts:[blankArt()]});
 const variantOf=p=>p.mode==="std"?"Estándar":p.kind==="free"?"Sin catálogo":"Personalizado";
 const instKey=r=>r.lote+"#"+(r.producto?"P"+(r.pidx||0):"L"+r.row);
@@ -878,11 +885,11 @@ function prodCalc(p){
   const cost=sum("cost"),venta=(num(p.pv)||0)*qty;
   return{qty,C,pesoTot:sum("pesoTot"),min:sum("min"),costMat:sum("costMat"),elec:sum("elec"),ins:sum("ins"),cost,venta,neta:venta-cost};
 }
-const matOpts=cur=>S.items.filter(i=>i.peso||i.code===cur).map(i=>`<option value="${esc(i.code)}" ${i.code===cur?"selected":""}>${esc(i.code)} · ${esc(i.color)} ${esc(i.tipo)}</option>`).join("");
-function artEditor(a,i,locked,canDel){
+const matOpts=cur=>(cur?"":'<option value="" selected>Elige el filamento…</option>')+S.items.filter(i=>i.peso||i.code===cur).map(i=>`<option value="${esc(i.code)}" ${i.code===cur?"selected":""}>${esc(i.code)} · ${esc(i.color)} ${esc(i.tipo)}</option>`).join("");
+function artEditor(a,i,locked,canDel,cat){
   const d=locked?" disabled":"";
   const ins=S.insumos.map(x=>`<option value="${esc(x.code)}" ${x.code===a.insCode?"selected":""}>${esc(x.code)} · ${esc(x.name)} (quedan ${nf(insLeft(x.code),0)})</option>`).join("");
-  const cols=a.cols.map((c,k)=>`<div class="colr" data-ci="${k}"><div class="row r4"><div><label class="f">Color ${k+1}: material</label><select class="in" data-ck="item"${d}>${matOpts(c.item)}</select></div>
+  const cols=a.cols.map((c,k)=>`<div class="colr" data-ci="${k}"><div class="row r4">${cat?`<div><label class="f">Color ${k+1}</label><div class="pname"><span class="muted">El filamento se elige al registrar el lote</span></div></div>`:`<div><label class="f">Color ${k+1}: filamento</label><select class="in" data-ck="item">${matOpts(c.item)}</select></div>`}
       <div><label class="f">Peso por unidad (g)</label><input class="in" type="number" min="0" step="0.01" data-ck="pesoU" value="${esc(c.pesoU)}"${d}></div>
       <div><label class="f">Purga por producto (g)</label><input class="in" type="number" min="0" step="0.01" data-ck="purga" value="${esc(c.purga)}"${d}></div>
       <div style="align-self:end">${a.cols.length>1&&!locked?`<button class="btn small ghost" data-act="delCol">Quitar color</button>`:""}</div></div></div>`).join("");
@@ -900,7 +907,7 @@ function artEditor(a,i,locked,canDel){
       :`<div><label class="f">Descripción del insumo extra</label><input class="in" data-k="insumo" value="${esc(a.insumo)}" placeholder="Ej. Aro metálico (vacío = N/A)"${d}></div><div><label class="f">Costo por producto ($)</label><input class="in" type="number" min="0" step="0.01" data-k="insC" value="${esc(a.insC)}"${d}></div>`}</div>
     <div class="prev" data-prev></div></div>`;
 }
-const prodBody=(p,locked)=>p.arts.map((a,i)=>artEditor(a,i,locked,p.arts.length>1)).join("")+(locked?"":`<div class="actions" style="margin:0 0 6px"><button class="btn small" data-act="addArt">+ Añadir artículo</button></div>`);
+const prodBody=(p,locked,cat)=>p.arts.map((a,i)=>artEditor(a,i,locked,p.arts.length>1,cat)).join("")+(locked?"":`<div class="actions" style="margin:0 0 6px"><button class="btn small" data-act="addArt">+ Añadir artículo</button></div>`);
 function prodEditor(p,pi,priceLabel){
   const locked=p.mode==="std";
   const nm=p.kind==="free"?`<div><label class="f">Nombre del producto</label><input class="in" data-pk="name" value="${esc(p.name)}" placeholder="Ej. Producto Enigma"></div>`
@@ -913,11 +920,11 @@ function prodEditor(p,pi,priceLabel){
 function updatePrevs(root,list){
   root.querySelectorAll(".prod").forEach(pe=>{const p=list[+pe.dataset.pi];if(!p)return;const P=prodCalc(p);
     pe.querySelectorAll(".art").forEach(el=>{const c=P.C[+el.dataset.ai];if(!c)return;
-      const split=c.cols.length>1?c.cols.map(k=>`<span>${esc(k.it?.color||k.item)} <b>${nf(k.pesoTot,1)} g · ${hm(k.min)}</b></span>`).join(""):"";
-      el.querySelector("[data-prev]").innerHTML=c.n?`<span>Piezas <b>${nf(c.n,0)}</b></span>${split}<span>Peso total <b>${nf(c.pesoTot,1)} g</b></span><span>Tiempo <b>${hm(c.min)}</b></span><span>Material <b>${money(c.costMat)}</b></span><span>Luz <b>${money(c.elec)}</b></span><span>Insumo <b>${money(c.ins)}</b></span>`:`<span>No se incluye (cantidad 0)</span>`});
-    pe.querySelector("[data-pprev]").innerHTML=`<span>Total del producto ×${nf(P.qty,0)}:</span><span>peso <b>${nf(P.pesoTot,1)} g</b></span><span>tiempo <b>${hm(P.min)}</b></span><span>costo <b>${money(P.cost)}</b></span><span>venta <b>${money(P.venta)}</b></span><span>neta <b class="${P.neta>=0?"pos":"neg"}">${money(P.neta)}</b></span>`});
+      const split=c.cols.length>1?c.cols.map((k,ci)=>`<span>${esc(k.it?.color||k.item||"Color "+(ci+1))} <b>${nf(k.pesoTot,1)} g · ${hm(k.min)}</b></span>`).join(""):"";
+      el.querySelector("[data-prev]").innerHTML=c.n?`<span>Piezas <b>${nf(c.n,0)}</b></span>${split}<span>Peso total <b>${nf(c.pesoTot,1)} g</b></span><span>Tiempo <b>${hm(c.min)}</b></span>${root.id==="view-prod"?"":`<span>Material <b>${money(c.costMat)}</b></span><span>Luz <b>${money(c.elec)}</b></span>`}<span>Insumo <b>${money(c.ins)}</b></span>`:`<span>No se incluye (cantidad 0)</span>`});
+    pe.querySelector("[data-pprev]").innerHTML=root.id==="view-prod"?`<span>Por producto:</span><span>filamento <b>${nf(P.pesoTot,1)} g</b></span><span>tiempo <b>${hm(P.min)}</b></span><span>precio <b>${money(P.venta)}</b></span><span class="muted">El costo se calcula al elegir el filamento en el lote.</span>`:`<span>Total del producto ×${nf(P.qty,0)}:</span><span>peso <b>${nf(P.pesoTot,1)} g</b></span><span>tiempo <b>${hm(P.min)}</b></span><span>costo <b>${money(P.cost)}</b></span><span>venta <b>${money(P.venta)}</b></span><span>neta <b class="${P.neta>=0?"pos":"neg"}">${money(P.neta)}</b></span>`});
 }
-function bindProds(view,getList,rerender,update){
+function bindProds(view,getList,rerender,update,cat){
   view.addEventListener("input",e=>{const t=e.target,pe=t.closest(".prod");if(!pe)return;const p=getList()[+pe.dataset.pi];if(!p)return;
     if(t.dataset.pk)p[t.dataset.pk]=t.value;
     else if(t.dataset.ck)p.arts[+t.closest(".art").dataset.ai].cols[+t.closest(".colr").dataset.ci][t.dataset.ck]=t.value;
@@ -925,8 +932,8 @@ function bindProds(view,getList,rerender,update){
     else return;
     update()});
   view.addEventListener("click",e=>{const b=e.target.closest("button[data-act]"),pe=b?.closest(".prod");if(!pe)return;const L=getList(),pi=+pe.dataset.pi,p=L[pi],act=b.dataset.act,a=b.closest(".art")?p.arts[+b.closest(".art").dataset.ai]:null;
-    if(act==="addArt")p.arts.push(blankArt());else if(act==="delArt")p.arts.splice(+b.closest(".art").dataset.ai,1);
-    else if(act==="addCol")a.cols.push(blankCol());else if(act==="delCol")a.cols.splice(+b.closest(".colr").dataset.ci,1);
+    if(act==="addArt")p.arts.push(blankArt(cat));else if(act==="delArt")p.arts.splice(+b.closest(".art").dataset.ai,1);
+    else if(act==="addCol")a.cols.push(blankCol(cat));else if(act==="delCol")a.cols.splice(+b.closest(".colr").dataset.ci,1);
     else if(act==="delProd")L.splice(pi,1);else if(act==="custom")p.mode="custom";else return;
     rerender()});
 }
@@ -936,7 +943,7 @@ function pickProd(v,list){
   else{const c=S.productos.find(x=>x.code===v);if(!c)return false;list.push(prodFromCat(c))}
   return true;
 }
-function checkProds(prods){
+function checkProds(prods,cat){
   if(!prods.length)return "Añade al menos un producto.";
   for(const [i,p] of prods.entries()){const t=`Producto ${i+1}`;
     if(!p.name.trim())return `${t}: falta el nombre.`;
@@ -945,7 +952,7 @@ function checkProds(prods){
     if(!act.length)return `${t}: necesita al menos un artículo con cantidad mayor que 0.`;
     for(const a of act){const u=`${t}, artículo ${p.arts.indexOf(a)+1}`;
       if(!a.desc.trim())return `${u}: falta la descripción.`;
-      for(const [k,c] of a.cols.entries()){if(!c.item)return `${u}, color ${k+1}: elige un material.`;if(!(num(c.pesoU)>0))return `${u}, color ${k+1}: falta el peso por unidad.`}
+      for(const [k,c] of a.cols.entries()){if(!cat&&!c.item)return `${u}, color ${k+1}: elige el filamento.`;if(!(num(c.pesoU)>0))return `${u}, color ${k+1}: falta el peso por unidad.`}
       if(!(((num(a.h)||0)*60+(num(a.m)||0))>0))return `${u}: falta el tiempo de impresión.`;
       if(a.insCode&&!(num(a.insQ)>0))return `${u}: indica la cantidad de insumo por producto.`}}
   return "";
@@ -1094,8 +1101,8 @@ function renderLabel(){
     <div class="nf-row"><span><b>Ganancia neta</b></span><span class="r"><b>${money(l.neta)}</b></span></div>
     <div class="b8"></div>
     <div class="nf-foot"><b>Equipo:</b> ${esc([...new Set(l.rows.map(r=>r.eq))].filter(Boolean).join(", ")||"—")}<br><b>Estado del lote:</b> ${esc(l.status)}<br><b>Destino:</b> ${esc(l.destinos.join(", ")||"—")}<br><b>Estado:</b> ${esc(l.estados.join(", ")||"—")}${notas.length?`<br><b>Notas:</b> ${esc(notas.join(" · "))}`:""}<br>Ganancia neta = venta − material − electricidad − insumos.</div></div>`;
-  $("#view-label").innerHTML=`<div class="labelwrap"><div class="nfcol">${label}</div><div>
-    <div class="panel"><div class="panel-h"><h2>Ver otro lote</h2></div>
+  $("#view-label").innerHTML=`<div class="panel-h"><h2>Etiqueta de lote</h2><span class="muted">Elige un lote para ver, imprimir o descargar su etiqueta</span></div><div class="labelwrap"><div class="nfcol">${label}</div><div>
+    <div class="panel"><div class="panel-h"><h2>Lote</h2></div>
       <label class="f" for="labelSel">Lote</label><select class="in" id="labelSel" style="max-width:360px">${L.map(x=>`<option value="${esc(x.id)}" ${x.id===l.id?"selected":""}>${esc(x.id)} · ${esc(x.articulo)}</option>`).join("")}</select>
       <label class="f" style="margin-top:12px">Estado del lote</label>${stSelect(l.id,l.status)}
       <div class="actions" style="margin-top:12px"><button class="btn" id="prevL">← Anterior</button><button class="btn" id="nextL">Siguiente →</button><button class="btn primary" id="printL">Imprimir etiqueta</button><button class="btn" id="imgL">Ver como imagen</button><button class="btn" id="dlL">Descargar imagen</button>${S.unlocked?`<button class="btn" id="editL">Editar lote</button><button class="btn danger" id="delL">Eliminar lote</button>`:""}</div></div>
@@ -1103,7 +1110,7 @@ function renderLabel(){
       <div><span class="badge L-A">A</span> Producto terminado (venta u otro uso)</div><div><span class="badge L-E">E</span> Terminado para taller u hogar</div>
       <div><span class="badge L-P">P</span> Prueba</div><div><span class="badge L-D">D</span> Dañado o parcialmente dañado</div></div></div></div></div>`;
   const go=id=>{S.labelLote=id;renderLabel()},i=L.findIndex(x=>x.id===l.id);
-  $("#labelSel").onchange=e=>go(e.target.value);$("#view-label").onchange=e=>{const s=e.target.closest("[data-stlote]");if(s)setLoteStatus(s.dataset.stlote,s.value)};$("#prevL").onclick=()=>go(L[(i-1+L.length)%L.length].id);$("#nextL").onclick=()=>go(L[(i+1)%L.length].id);$("#printL").onclick=()=>window.print();$("#imgL").onclick=()=>labelImage("view");$("#dlL").onclick=()=>labelImage("download");if(S.unlocked){$("#editL").onclick=()=>startEdit(l.id);$("#delL").onclick=()=>deleteLote(l.id)}
+  $("#labelSel").onchange=e=>go(e.target.value);$("#view-label").onchange=e=>{const s=e.target.closest("[data-stlote]");if(s)setLoteStatus(s.dataset.stlote,s.value)};$("#prevL").onclick=()=>go(L[(i-1+L.length)%L.length].id);$("#nextL").onclick=()=>go(L[(i+1)%L.length].id);$("#printL").onclick=()=>printLabel($("#label"));$("#imgL").onclick=()=>labelImage("view","lote");$("#dlL").onclick=()=>labelImage("download","lote");if(S.unlocked){$("#editL").onclick=()=>startEdit(l.id);$("#delL").onclick=()=>deleteLote(l.id)}
 }
 
 
@@ -1259,8 +1266,8 @@ $("#view-quote").addEventListener("click",e=>{const b=e.target.closest("button")
     setTab("reg");toast("Cotización copiada a Registrar lote. Revisa y registra.")}});
 
 /* ---- Etiqueta como imagen (PNG) ---- */
-async function labelCanvas(){
-  const el=$("#label");if(!el)return null;
+async function labelCanvas(el){
+  if(!el)return null;
   try{await document.fonts.load('800 34px Montserrat');await document.fonts.load('400 17px Montserrat')}catch(e){}
   const SC=3,W=420,FONT='"Helvetica Neue",Helvetica,Arial,sans-serif',MONT='Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif';
   const F=(w,sz,fam=FONT)=>`${w} ${sz}px ${fam}`;
@@ -1287,18 +1294,18 @@ async function labelCanvas(){
     const x0=14,cw=392;let y=12;
     if(draw){x.fillStyle="#fff";x.fillRect(0,0,W,H)}
     // cabecera
-    const top=el.querySelector(".nf-top"),left=top.children[0],right=top.children[1];
+    const top=el.querySelector(".nf-top"),left=top.children[0],right=top.children[1]||null;
     let ly=y;
     const t1=left.querySelector(".t1").textContent.toUpperCase(),t2=left.querySelector(".t2").textContent.toUpperCase();
     x.fillStyle="#000";x.font=F(800,34,MONT);const w1=spaced(t1,x0,ly+27,34*.03);
     x.font=F(400,17,MONT);spaced(t2,x0+w1+9,ly+27,17*.24);ly+=34+6;
     for(const l of wrap(runsOf(left.querySelector(".nf-id"),true),15,278)){drawLine(l,x0,ly+16,15);ly+=21.75}
     for(const l of wrap(runsOf(left.querySelector(".nf-sm")),13,278)){drawLine(l,x0,ly+12.5,13);ly+=16.9}
-    const lt=right.querySelector(".nf-letter"),bx=x0+cw-104,by=y-2;
-    rect(bx,by,104,104,"#000");rect(bx+3,by+3,98,98,getComputedStyle(lt).backgroundColor);
-    if(draw){x.fillStyle="#fff";x.font=F(900,84);x.textAlign="center";x.fillText(lt.textContent,bx+52,by+82);
-      x.fillStyle="#000";x.font=F(700,11);x.fillText(right.querySelector(".nf-letter-cap").textContent,bx+52,by+104+3+10);x.textAlign="left"}
-    y+=Math.max(ly-y,104-2+3+16);
+    if(right){const lt=right.querySelector(".nf-letter"),bx=x0+cw-104,by=y-2;
+      rect(bx,by,104,104,"#000");rect(bx+3,by+3,98,98,getComputedStyle(lt).backgroundColor);
+      if(draw){x.fillStyle="#fff";x.font=F(900,84);x.textAlign="center";x.fillText(lt.textContent,bx+52,by+82);
+        x.fillStyle="#000";x.font=F(700,11);x.fillText(right.querySelector(".nf-letter-cap").textContent,bx+52,by+104+3+10);x.textAlign="left"}
+      y+=Math.max(ly-y,104-2+3+16)}else y=ly+4;
     // resto
     for(const c of [...el.children].slice(1)){
       const cl=c.classList;
@@ -1330,11 +1337,11 @@ async function labelCanvas(){
   let [c,x]=mk(3000);const h=run(x,false,0);
   [c,x]=mk(h);run(x,true,h);return c;
 }
-async function labelImage(mode){
-  const id=S.labelLote;if(!id||!$("#label"))return;
-  const name=`etiqueta_enigma_center_lote${id}.png`;
+async function labelImage(mode,kind){
+  const isP=kind==="prod",id=isP?S.prodLabel:S.labelLote,el=$(isP?"#plabel":"#label");if(!id||!el)return;
+  const name=isP?`etiqueta_enigma_center_producto_${id}.png`:`etiqueta_enigma_center_lote${id}.png`;
   try{
-    const c=await labelCanvas();
+    const c=await labelCanvas(el);
     const blob=await new Promise(r=>c.toBlob(r,"image/png"));if(!blob)throw new Error("no se pudo crear la imagen");
     const url=URL.createObjectURL(blob);
     const download=async()=>{
@@ -1352,35 +1359,81 @@ async function labelImage(mode){
   }catch(e){console.error(e);toast("No se pudo crear la imagen: "+e.message,5000)}
 }
 
+/* ---- Etiqueta de producto (valores por 1 producto) ---- */
+function prodLabelHtml(c){
+  const P=prodCalc({...c,qty:1}),pv=num(c.pv)||0,gan=pv-P.cost;
+  const act=c.arts.map((a,i)=>({a,k:P.C[i]})).filter(x=>x.k&&x.k.n>0);
+  const noFil=act.some(({a})=>a.cols.some(k=>!k.item));
+  const gBy={};let purga=0,kwh=0;
+  for(const {a,k} of act){
+    k.cols.forEach((x,ci)=>{const key=x.item||"Color "+(ci+1);const o=gBy[key]??={g:0,color:x.it?.color||"",peso:x.item?(x.it?.peso||1000):0};o.g+=x.pesoTot;kwh+=(x.it?.kw||0)*x.min/60});
+    for(const col of a.cols)purga+=num(col.purga)||0}
+  const arts=act.map(({a,k})=>`<div class="nf-row"><span>${esc(a.desc)} <b>×${nf(k.n,0)}</b></span><span class="r">${nf(k.pesoTot,1)} g · ${hm(k.min)}</span></div>`).join("");
+  const mats=Object.entries(gBy).map(([k,v])=>`<div class="nf-row ind"><span>${esc(k)} ${esc(v.color)}</span><span class="r">${nf(v.g,1)} g${v.peso?` <b>${nf(v.g/v.peso*100,0)}%</b>`:""}</span></div>`).join("");
+  const insL=act.filter(({a,k})=>k.ins>0||a.insCode||(a.insumo||"").trim());
+  const insHtml=insL.length?insL.map(({a,k})=>`<div class="nf-row"><span>Insumo: ${esc(a.insCode?(insByCode(a.insCode)?.name||a.insCode):((a.insumo||"").trim()||"sin descripción"))}${k.insQ?" ×"+nf(k.insQ,0):""}</span><span class="r">${money(k.ins)}</span></div>`).join(""):`<div class="nf-row"><span>Insumo extra</span><span class="r">N/A</span></div><div class="nf-row"><span>Costo del insumo</span><span class="r">N/A</span></div>`;
+  const notas=act.map(x=>(x.a.notas||"").trim()).filter(Boolean);
+  return `<div class="nf" id="plabel">
+    <div class="nf-top"><div><h2 class="nf-title"><span class="t1">ENIGMA</span><span class="t2">CENTER</span></h2><div class="nf-id">${esc(c.code)} · ${esc(c.name)}</div><div class="nf-sm">${c.mode==="std"?"Producto estándar":"Producto personalizable"}<br>${act.length} artículo${act.length===1?"":"s"} · valores por 1 producto</div></div></div>
+    <div class="b8"></div>${arts||'<div class="nf-row"><span>Sin artículos</span><span class="r">—</span></div>'}<div class="b8"></div>
+    <div class="nf-big"><span class="t">Tiempo de impresión</span><span class="v">${hm(P.min)}</span></div><div class="b4"></div>
+    <div class="nf-cols">% de una bobina</div>
+    <div class="nf-row"><span><b>Filamento total</b></span><span class="r"><b>${nf(P.pesoTot,1)} g</b></span></div>${mats}
+    <div class="nf-row ind"><span>Purga incluida</span><span class="r">${nf(purga,1)} g</span></div>
+    <div class="b4"></div>
+    <div class="nf-row"><span>Electricidad</span><span class="r">${noFil?"según filamento":nf(kwh,3)+" kWh · "+money(P.elec)}</span></div>
+    <div class="nf-row"><span>Costo del material</span><span class="r">${noFil?"según filamento":money(P.costMat)}</span></div>${insHtml}
+    <div class="nf-row"><span><b>Costo total</b></span><span class="r"><b>${noFil?"según filamento":money(P.cost)}</b></span></div>
+    <div class="b4"></div>
+    <div class="nf-row"><span>Precio de venta</span><span class="r">${pv?money(pv):"—"}</span></div>
+    <div class="nf-row"><span><b>Ganancia neta</b></span><span class="r"><b>${pv&&!noFil?money(gan):"—"}</b></span></div>
+    <div class="b8"></div>
+    <div class="nf-foot"><b>Código:</b> ${esc(c.code)}${notas.length?`<br><b>Notas:</b> ${esc(notas.join(" · "))}`:""}<br>Ganancia neta = precio − material − electricidad − insumos.</div></div>`;
+}
+function prodLabelPanel(){
+  if(!S.productos.length)return "";
+  let c=S.productos.find(x=>x.code===S.prodLabel);if(!c){c=S.productos[0];S.prodLabel=c.code}
+  return `<div class="panel" style="margin-top:16px"><div class="panel-h"><h2>Etiqueta de producto</h2><span class="muted">Elige un producto para ver, imprimir o descargar su etiqueta</span></div>
+    <div class="labelwrap"><div class="nfcol">${prodLabelHtml(c)}</div><div>
+      <label class="f" for="plabelSel">Producto</label><select class="in" id="plabelSel" style="max-width:360px">${S.productos.map(x=>`<option value="${esc(x.code)}" ${x.code===c.code?"selected":""}>${esc(x.code)} · ${esc(x.name)}</option>`).join("")}</select>
+      <div class="actions" style="margin-top:12px"><button class="btn" id="pPrev">← Anterior</button><button class="btn" id="pNext">Siguiente →</button><button class="btn primary" id="pPrint">Imprimir etiqueta</button><button class="btn" id="pImg">Ver como imagen</button><button class="btn" id="pDl">Descargar imagen</button></div>
+      <p class="hint" style="margin-top:12px">La etiqueta muestra los valores de un solo producto, calculados con los materiales, tiempos e insumos del catálogo.</p></div></div></div>`;
+}
+
 /* ---- Catálogo de productos ---- */
 const nextProdCode=()=>{let mx=0;for(const p of S.productos){const m=/^PRD-(\d+)$/.exec(p.code);if(m)mx=Math.max(mx,+m[1])}return "PRD-"+String(mx+1).padStart(3,"0")};
 function renderProd(){
   const pd=S.prodDraft,p=pd?.prod;
   const rows=S.productos.map((c,i)=>{const P=prodCalc({...c,qty:1}),pv=num(c.pv)||0,g=pv-P.cost;
-    return `<tr><td><b>${esc(c.code)}</b></td><td>${esc(c.name)}</td><td>${c.mode==="std"?"Estándar":"Personalizable"}</td><td class="num">${c.arts.length}</td><td class="num">${hm(P.min)}</td><td class="num">${nf(P.pesoTot,0)} g</td><td class="num">${money(P.cost)}</td><td class="num">${pv?money(pv):"—"}</td><td class="num ${g>=0?"pos":"neg"}">${pv?money(g):"—"}</td>
+    return `<tr><td><b>${esc(c.code)}</b></td><td>${esc(c.name)}</td><td>${c.mode==="std"?"Estándar":"Personalizable"}</td><td class="num">${c.arts.length}</td><td class="num">${hm(P.min)}</td><td class="num">${nf(P.pesoTot,0)} g</td><td class="num muted">según filamento</td><td class="num">${pv?money(pv):"—"}</td><td class="num muted">—</td>
       <td><button class="btn small ghost" data-pedit="${i}">Editar</button> <button class="btn small ghost" data-pdup="${i}">Duplicar</button> <button class="btn small danger" data-pdel="${i}">Eliminar</button></td></tr>`}).join("");
   const form=p?`<div class="panel"><div class="panel-h"><h2>${pd.idx>=0?"Editar "+esc(p.code):"Nuevo producto"}</h2></div>
     <div class="prod" data-pi="0"><div class="row r3"><div><label class="f">Nombre del producto</label><input class="in" data-cf="name" value="${esc(p.name)}" placeholder="Ej. Portavasos home"></div>
       <div><label class="f">Tipo</label><select class="in" data-cf="mode"><option value="std" ${p.mode==="std"?"selected":""}>Estándar (precio y artículos fijos)</option><option value="custom" ${p.mode!=="std"?"selected":""}>Personalizable (se edita en cada lote)</option></select></div>
       <div><label class="f">Precio de venta por producto ($)</label><input class="in" type="number" min="0" step="0.01" data-cf="pv" value="${esc(p.pv)}"></div></div>
-      ${prodBody(p,false)}<div class="prev prev-p" data-pprev></div></div>
+      ${prodBody(p,false,true)}<div class="prev prev-p" data-pprev></div></div>
     <p class="hint">Todo se define <b>por producto</b>: si el portavasos lleva 7 piezas y 20 min de impresión, así se escribe aquí. Al registrar un lote se multiplica por la cantidad de productos.</p>
     <div class="actions"><button class="btn primary" id="pSave">Guardar producto</button><button class="btn ghost" id="pCancel">Cancelar</button></div></div>`
     :`<div class="actions"><button class="btn primary" id="pNew">+ Nuevo producto</button></div>`;
   $("#view-prod").innerHTML=`<div class="panel"><div class="panel-h"><h2>Catálogo de productos</h2><span class="muted">Hoja Productos. Un producto agrupa uno o varios artículos.</span></div>
-    <div class="scroll"><table class="tbl"><thead><tr><th>Código</th><th>Producto</th><th>Tipo</th><th class="num">Artículos</th><th class="num">Tiempo</th><th class="num">Filamento</th><th class="num">Costo</th><th class="num">Precio</th><th class="num">Ganancia</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="10" class="muted">Aún no hay productos. Crea el primero.</td></tr>'}</tbody></table></div></div>${form}`;
+    <div class="scroll"><table class="tbl"><thead><tr><th>Código</th><th>Producto</th><th>Tipo</th><th class="num">Artículos</th><th class="num">Tiempo</th><th class="num">Filamento</th><th class="num">Costo</th><th class="num">Precio</th><th class="num">Ganancia</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="10" class="muted">Aún no hay productos. Crea el primero.</td></tr>'}</tbody></table></div></div>${form}${prodLabelPanel()}`;
   if(p){p.qty=1;updatePrevs($("#view-prod"),[p])}
 }
-bindProds($("#view-prod"),()=>S.prodDraft?[S.prodDraft.prod]:[],()=>renderProd(),()=>updatePrevs($("#view-prod"),S.prodDraft?[S.prodDraft.prod]:[]));
+bindProds($("#view-prod"),()=>S.prodDraft?[S.prodDraft.prod]:[],()=>renderProd(),()=>updatePrevs($("#view-prod"),S.prodDraft?[S.prodDraft.prod]:[]),true);
+$("#view-prod").addEventListener("change",e=>{if(e.target.id==="plabelSel"){S.prodLabel=e.target.value;renderProd()}});
 $("#view-prod").addEventListener("input",e=>{const t=e.target;if(t.dataset.cf&&S.prodDraft){S.prodDraft.prod[t.dataset.cf]=t.value;updatePrevs($("#view-prod"),[S.prodDraft.prod])}});
 $("#view-prod").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const D=b.dataset;
-  if(b.id==="pNew"){S.prodDraft={idx:-1,prod:{kind:"cat",code:nextProdCode(),name:"",mode:"custom",qty:1,pv:"",arts:[blankArt()]}};renderProd()}
-  else if(D.pedit!==undefined){S.prodDraft={idx:+D.pedit,prod:cloneP(S.productos[+D.pedit])};renderProd();window.scrollTo(0,document.body.scrollHeight)}
-  else if(D.pdup!==undefined){const c=cloneP(S.productos[+D.pdup]);c.code=nextProdCode();c.name+=" (copia)";S.prodDraft={idx:-1,prod:c};renderProd();window.scrollTo(0,document.body.scrollHeight)}
+  if(b.id==="pNew"){S.prodDraft={idx:-1,prod:{kind:"cat",code:nextProdCode(),name:"",mode:"custom",qty:1,pv:"",arts:[blankArt(true)]}};renderProd()}
+  else if(D.pedit!==undefined){S.prodDraft={idx:+D.pedit,prod:cloneP(S.productos[+D.pedit])};renderProd();$("#view-prod .prod")?.scrollIntoView()}
+  else if(D.pdup!==undefined){const c=cloneP(S.productos[+D.pdup]);c.code=nextProdCode();c.name+=" (copia)";S.prodDraft={idx:-1,prod:c};renderProd();$("#view-prod .prod")?.scrollIntoView()}
   else if(D.pdel!==undefined){const c=S.productos[+D.pdel];if(!confirm(`¿Eliminar «${c.name}» del catálogo? Los lotes ya registrados no cambian.`))return;S.productos.splice(+D.pdel,1);S.prodDirty=true;toast("Producto eliminado. Guarda el Excel para aplicarlo.");renderAll()}
   else if(b.id==="pCancel"){S.prodDraft=null;renderProd()}
-  else if(b.id==="pSave"){const pd=S.prodDraft,p=pd.prod;p.qty=1;const er=checkProds([p]);if(er)return toast(er.replace(/^Producto 1: /,"").replace(/^Producto 1, /,""),5000);
-    p.name=p.name.trim();p.pv=num(p.pv)||0;if(pd.idx>=0)S.productos[pd.idx]=cloneP(p);else S.productos.push(cloneP(p));
+  else if(b.id==="pPrev"||b.id==="pNext"){const n=S.productos.length,i=S.productos.findIndex(x=>x.code===S.prodLabel);S.prodLabel=S.productos[(i+(b.id==="pNext"?1:-1)+n)%n].code;renderProd()}
+  else if(b.id==="pPrint")printLabel($("#plabel"))
+  else if(b.id==="pImg")labelImage("view","prod")
+  else if(b.id==="pDl")labelImage("download","prod")
+  else if(b.id==="pSave"){const pd=S.prodDraft,p=pd.prod;p.qty=1;const er=checkProds([p],true);if(er)return toast(er.replace(/^Producto 1: /,"").replace(/^Producto 1, /,""),5000);
+    p.name=p.name.trim();p.pv=num(p.pv)||0;p.arts.forEach(a=>a.cols.forEach(k=>{k.item=""}));if(pd.idx>=0)S.productos[pd.idx]=cloneP(p);else S.productos.push(cloneP(p));
     S.prodDirty=true;S.prodDraft=null;toast(`${p.code} guardado. Guarda el Excel para escribirlo.`);renderAll()}});
 
 /* ---- Equipos ---- */
