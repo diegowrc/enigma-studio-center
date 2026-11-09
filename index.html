@@ -1125,12 +1125,15 @@ function renderLabel(){
   let l=L.find(x=>x.id===S.labelLote)||L.at(-1);S.labelLote=l.id;
   const gBy={};for(const r of l.rows){const k=r.item||"—";(gBy[k]??={g:0,color:r.color,tipo:r.tipo,peso:S.itemMap[r.item]?.peso||1000});gBy[k].g+=r.pesoTot}
   const purga=l.rows.reduce((a,r)=>a+r.purga,0),notas=l.rows.map(r=>r.notas).filter(Boolean);
-  const arts=l.rows.map(r=>`<div class="nf-row"><span>${esc(r.desc||r.articulo)} <b>×${r.cant}</b></span><span class="r">${nf(r.pesoU||0,2)} g c/u · ${hm(r.min)}</span></div>`).join("");
+  // Resumen por artículo: junta todas las filas (colores) de un mismo producto/artículo en una sola línea
+  const aG=new Map();for(const r of l.rows){const k=instKey(r);if(!aG.has(k))aG.set(k,{rows:[]});aG.get(k).rows.push(r)}
+  const arts=[...aG.values()].map(({rows:g})=>{const f=g[0],pu=g.reduce((a,r)=>a+(r.pesoU||0),0),mn=g.reduce((a,r)=>a+(r.min||0),0);
+    return `<div class="nf-row"><span>${esc(f.desc||f.articulo)} <b>×${f.cant}</b></span><span class="r">${nf(pu,2)} g c/u · ${hm(mn)}</span></div>`}).join("");
   const mats=Object.entries(gBy).map(([k,v])=>`<div class="nf-row ind"><span>${esc(k)} ${esc(v.color)}</span><span class="r">${nf(v.g,1)} g <b>${nf(v.g/v.peso*100,0)}%</b></span></div>`).join("");
   const insL=l.rows.filter(r=>r.insumo||r.insumoCosto);
   const insHtml=insL.length?insL.map(r=>`<div class="nf-row"><span>Insumo: ${esc(r.insumo||"sin descripción")}${r.insQty?" ×"+nf(r.insQty,0):""}</span><span class="r">${money(r.insumoCosto||0)}</span></div>`).join(""):`<div class="nf-row"><span>Insumo extra</span><span class="r">N/A</span></div><div class="nf-row"><span>Costo del insumo</span><span class="r">N/A</span></div>`;
   const label=`<div class="nf" id="label">
-    <div class="nf-top"><div><h2 class="nf-title"><span class="t1">ENIGMA</span><span class="t2">CENTER</span></h2><div class="nf-id">${esc(l.id)} · ${esc(l.articulo)}</div><div class="nf-sm">${longDate(l.fecha)}<br>${l.rows.length} artículo${l.rows.length>1?"s":""} · ${l.unid} unidad${l.unid>1?"es":""}</div></div>
+    <div class="nf-top"><div><h2 class="nf-title"><span class="t1">ENIGMA</span><span class="t2">CENTER</span></h2><div class="nf-id">${esc(l.id)} · ${esc(l.articulo)}</div><div class="nf-sm">${longDate(l.fecha)}<br>${aG.size} artículo${aG.size>1?"s":""} · ${l.unid} unidad${l.unid>1?"es":""}</div></div>
       <div><div class="nf-letter L-${lc(l.letter)}">${l.letter}</div><div class="nf-letter-cap">${LET[l.letter].t}</div></div></div>
     <div class="b8"></div>${arts}<div class="b8"></div>
     <div class="nf-big"><span class="t">Tiempo de impresión</span><span class="v">${hm(l.min)}</span></div><div class="b4"></div>
